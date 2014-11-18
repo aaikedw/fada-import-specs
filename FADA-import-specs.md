@@ -23,6 +23,7 @@ _Note: either one of the two import mechanisms will be applicable for a specific
 - For each data source a log will be kept
 - The different import tasks have to be performed sequentially, but are actually independent tasks. The operator can stop between any of these step and resume processing at a later stage
 - During the import phase, the user will be presented with a progress bar to indicate which steps have been completed and which tasks are left
+_Note: General workflow: could use the same setup as for the DPIT with staging and production database. If so preferably using same staging db._
 ## Excel template processing
 ### Current status
 - Groovy scripts for the following steps are available
@@ -58,10 +59,13 @@ _Group metadata represents all information present in the groups-table. Currentl
 > input file published	date:    
 > Number of species	
 > Distribution Level
-It seems logic to enter these metadata at the time of the creation of a resource. 
 
+It seems logic to enter these metadata at the time of the creation of a resource, unless it would represent a considerable development effort. If so, the metadata could be restricted to the name, while other metadata can still be completed/edited through the on-line web-interface.
+What is more crucial however is that any processing, publication, etc. dates are currently entered manually (an thus do not necessarily represent the actual dates these processes were executed). With this new tool, the date fields should be auto-populated where possible.
 [option 1: atomised processing]
+_Note: both options still need to be evaluated in detail, but eventually one has to be chosen. At this stage I am inclined to go for option 2, but details need to be worked out._
 - upload data [need for validating field mapping in interface?]
+_Note: Currently the mapping is purely done based on the position. In principle, editors are not supposed to change the template, but some different versions are around, so a quick visual check for comparing the header with the expected fields could be useful to confirm the correct mapping._
 - upload report
 -- option to ignore specific lines (with errors, empty lines)
 -- option to validate suspect entries (e.g. ignore lines without author info, year 1960a) / correct common errors (e.g. 196O -with letter “O” instead of 1960)
@@ -70,6 +74,7 @@ It seems logic to enter these metadata at the time of the creation of a resource
 - validation report review
 -- option to ignore specific errors
 -- option to correct common errors (add line for species only when info is present on line to declare synonym)
+_Note: this would indeed require a possibility to edit species properties in a grid, however, I believe we should clearly define which fields we may want to edit through the interface and which ones we don’t (and would thus require editing in Excel). For this, we definitely need to document the most common cases. I don’t expect the need for this functionality for the DwC-A import as these data should already be validated during the import in the parent database, but it would be worthwhile to consider in case the same rules could be applied._
 -- option to correct errors in original Excel file and re-upload the data [option to download file in Excel format with already committed changes during upload report review]
 - import preview
 - import preview review
@@ -88,9 +93,18 @@ It seems logic to enter these metadata at the time of the creation of a resource
 - injection in FADA database
 - (re)linking to ‘biofresh key’ tables and re-generation of genus-to-families table
 - propagation of changes to BioFresh species register
+
+_Question Sylvain: -further devs?
+  to allow to have a package structure which fits well all code
+  for example, now, only import but there should be a Web Service for VLIZ shouldn't it?_
+_Answer Aaike: Not entirely sure about this question. But the exchange of the data with VLIZ is outside the scope of this tool._
+### List of data validation rules and common errors to be corrected through the interface
+**To be worked out**
+
 ## DwC-A processing [Early draft, to be worked out during further discussion]
 ### Current status
 We have selected the required fields for data exchange in the framework AquaRES and have received a sample export from VLIZ. Import scripts have to be constructed.
+_The DwC-A files will be posted on a website. From our side this may be on an IPT (but these are exports from us and thus do not need to be read by the tool), but I doubt this will be the case for VLIZ. As we are still discussing this, we could of course suggest a way which would make our life easier._
 ### Interface
 - choose group (dropdown) and indicate whether it concerns a new checklist or an updated one / + option to create a new (sub)group
 - validate EML metadata (check/enter for FADA specific metadata: editor, co-editor, checklist name,…)
