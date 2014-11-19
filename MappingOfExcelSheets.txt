@@ -1,0 +1,119 @@
+Mapping of the excel sheets we analyse during the upload.
+
+Different field type are
+"str" : String
+"pby" : Publication year (1952, 1952a)
+"dis" : Distribution (AaNnPpYyXx01)
+"yno" : YesNo (YyNn)
+"awd" : AquaticWaterDependant (A|WD)
+"psi" : Parasitic (YyNn)
+"par" : Parenthese (YyNn)
+
+"position" is the excel column but the numbering is stupid.
+The "poi" library uses excel conventions so numbering should start at 1.
+I always add 1 in my code and should have done it here. Stupid.
+
+Mapping for sheet "references"
+name="author" position="0" type="str"
+name="year" position="1" type="pby"
+name="title" position="2" type="str"
+name="source" position="3" type="str"
+name="refKey" position="4" type="str"
+name="url" position="5" type="str"
+
+Mapping for sheet "faunistic" (V1)
+name="genus" position="0" type="str"
+name="subGenus" position="1" type="str"
+name="species" position="2" type="str"
+name="subSpecies" position="3" type="str"
+name="authors" position="4" type="str"
+name="date" position="5" type="pby"
+name="pa" position="6" type="dis"
+name="ate" position="7" type="dis"
+name="au" position="8" type="dis"
+name="ol" position="9" type="dis"
+name="na" position="10" type="dis"
+name="nt" position="11" type="dis"
+name="ant" position="12" type="dis"
+name="pac" position="13" type="dis"
+name="faunisticComment" position="14" type="str"
+name="countryLevel" position="15" type="str"
+name="refKey" position="16" type="str"
+name="lentic" position="17" type="yno"
+name="lotic" position="18" type="yno"
+name="exotic" position="19" type="str"
+name="bodySize" position="20" type="str"
+name="parasitic" position="21" type="psi"
+name="aquaticWaterDependant" position="22" type="awd"
+
+Mapping for sheet "faunistic" (V2)
+name="genus" position="0" type="str"
+name="subGenus" position="1" type="str"
+name="species" position="2" type="str"
+name="subSpecies" position="3" type="str"
+name="authors" position="4" type="str"
+name="date" position="5" type="pby"
+name="pa" position="6" type="dis"
+name="ate" position="7" type="dis"
+name="au" position="8" type="dis"
+name="ol" position="9" type="dis"
+name="na" position="10" type="dis"
+name="nt" position="11" type="dis"
+name="ant" position="12" type="dis"
+name="pac" position="13" type="dis"
+name="faunisticComment" position="14" type="str"
+name="countryLevel" position="15" type="str"
+name="refKey" position="16" type="str"
+name="lentic" position="17" type="yno"
+name="lotic" position="18" type="yno"
+name="exotic" position="19" type="str"
+name="bodySize" position="20" type="str"
+name="parasitic" position="21" type="psi"
+name="aquaticWaterDependant" position="22" type="awd"
+name="aquaticWaterDependantScat" position="23" // This is new and I actually never implemented it
+
+Mapping for sheet "taxonomy" (V1)
+name="family" position="0" type="str"
+name="subfamily" position="1" type="str"
+name="tribe" position="2" type="str"
+name="subtribe" position="3" type="str"
+name="genus" position="4" type="str"
+name="subgenus" position="5" type="str"
+name="species" position="6" type="str"
+name="subspecies" position="7" type="str"
+name="authors" position="8" type="str"
+name="date" position="9" type="pby"
+name="originalGenus" position="10" type="str"
+name="declensionSpecies" position="11" type="str"
+name="parentheses" position="12" type="par"
+name="synGenusSubGenus" position="13" type="str"
+name="synSpeciesSubSpecies" position="14" type="str"
+name="synAuthors" position="15" type="str"
+name="synDate" position="16" type="pby"
+name="synOriginalGenus" position="17" type="str"
+name="taxonomicComments" position="18" type="str"
+name="refkey" position="19" type="str"
+
+Mapping for sheet "taxonomy" (V2)
+name="family" position="0" type="str"
+name="subfamily" position="1" type="str"
+name="tribe" position="2" type="str"
+name="subtribe" position="3" type="str"
+name="genus" position="4" type="str"
+name="subgenus" position="5" type="str"
+name="speciesgroup" position="6" type="str"
+name="species" position="7" type="str"
+name="subspecies" position="8" type="str"
+name="authors" position="9" type="str"
+name="date" position="10" type="pby"
+name="originalGenus" position="11" type="str"
+name="declensionSpecies" position="12" type="str"
+name="parentheses" position="13" type="par"
+name="synGenusSubGenus" position="14" type="str"
+name="synSpeciesSubSpecies" position="15" type="str"
+name="synAuthors" position="16" type="str"
+name="synDate" position="17" type="pby"
+name="synOriginalGenus" position="18" type="str"
+name="taxonomicComments" position="19" type="str"
+name="refkey" position="20" type="str"
+
