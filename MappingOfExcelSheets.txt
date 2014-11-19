@@ -12,6 +12,8 @@ Different field type are
 "position" is the excel column but the numbering is stupid.
 The "poi" library uses excel conventions so numbering should start at 1.
 I always add 1 in my code and should have done it here. Stupid.
+"name" actually is the name of the Groovy object that must receive the information.
+The Groovy object is itself mapped to a table.
 
 Mapping for sheet "references"
 name="author" position="0" type="str"

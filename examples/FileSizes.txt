@@ -8,3 +8,4 @@ Coleoptera-Haliplidea-B-Van-Vondel-20130519.xls 409 319
 Coleoptera-Psephenidae-Manfred.xlsx 447 302
 Diptera-Chironomid-Tanytarsini-Gilka-group-43.xlsx 296 0
 FADA-MOSQUITO-pr-20140202-G25-corr4.xls 4598 4588
+Diptera-Simuliidea-Currie-And-Adler-group-46-ADW-LessHeavy.xlsx 5152 5152
