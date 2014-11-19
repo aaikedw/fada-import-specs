@@ -1,0 +1,10 @@
+FileName NumberOfTaxaRows NumberOfDistributionRows
+N-Halacaridae-FADA-Data-Input-File-HS2013-for_import.xls 126 108
+Gastrotricha-group-8-20130214-corr.xls 596 328
+Donaciinae-EG-20140605-02-cor3.xls 407 185
+Coleoptera-Dytisc-A-Nilsson-29_08_13-cor3.xls 6653 4378
+Coleoptera-Gyrinidae-Mazzoldi.xls 1167 0
+Coleoptera-Haliplidea-B-Van-Vondel-20130519.xls 409 319
+Coleoptera-Psephenidae-Manfred.xlsx 447 302
+Diptera-Chironomid-Tanytarsini-Gilka-group-43.xlsx 296 0
+FADA-MOSQUITO-pr-20140202-G25-corr4.xls 4598 4588
