@@ -6,7 +6,8 @@ The FADA initiative and its networking activities involving taxonomic experts le
 Since May 2014, we focus on the FADA database again through the BRAIN AquaRES (Aquatic Register Exchange and Services) project. We aim to improve the FADA database, by both streamlining the database import procedures and setting up data exchange with the World Register of Marine Species (WoRMS) and the Register of Antarctic Marine Species (RAMS). In order to implement this project we are looking to build a web application “FADA import tool” for importing data into the FADA database.
 ### Database status
 Currently (18/11/2014), taxonomic checklists for 16 organism groups are published on-line. In total these checklists contain around 47.000 names and thus represent almost 1/3 of the freshwater animal species, which is estimated at roughly 150.000 species. 
-The organisation by organism group, corresponds to the initial organisation as was adopted for the paper publication. In fact, these groups represent an “operational unit” for which a taxonomic editor was found to produce an (informed) estimate of the number of known species. These organism groups may represent  different taxonomic levels, e.g. classes, orders or families.
+### Organisation in groups
+The organisation by organism group, corresponds to the initial organisation as was adopted for the paper publication. In fact, these groups represent an “operational unit” for which a taxonomic editor was found to produce an (informed) estimate of the number of known species. These organism groups may represent  different taxonomic levels, e.g. classes, orders or families.<br/>
 For database purposes and/or because no taxonomic editor is found to provide a checklist, we may subdivide the task and create a new (sub)group. While taxonomically this represents the creation of a real subgroup, we do not aim to introduce any hierarchical structure at the level of the groups themselves, as these remain “operational units” in the first place.
 In terms of size the checklist for the different groups vary from not even 100 species names to around 16.000 names for Vertebrates-Fish. Unless, at some stage we will extend the scope at the database to non-animal freshwater groups, the total number of (accepted) species is unlikely surpass 200.000 and 16.000 for individual groups. 
 ## Technical background
@@ -41,7 +42,7 @@ _Note: General workflow: could use the same setup as for the DPIT with staging a
 - [new] choose group (dropdown) and indicate whether it concerns a new checklist or an updated one 
 -- [new] option to create a new (sub)group and enter the group metadata
 _While semantically, a group may represent a subgroup, this does not represent the need for introducing a hierarchical structure in the groups themselves._
-_Group metadata represents all information present in the groups-table. Currently this information is editable through the FADA web interface and includes:
+_Group metadata represents all information present in the fada schema's groups-table. Currently this information is editable through the FADA web interface and includes:
 > Name	
 > Created	
 > Updated	
@@ -65,7 +66,7 @@ What is more crucial however is that any processing, publication, etc. dates are
 [option 1: atomised processing]
 _Note: both options still need to be evaluated in detail, but eventually one has to be chosen. At this stage I am inclined to go for option 2, but details need to be worked out._
 - upload data [need for validating field mapping in interface?]
-_Note: Currently the mapping is purely done based on the position. In principle, editors are not supposed to change the template, but some different versions are around, so a quick visual check for comparing the header with the expected fields could be useful to confirm the correct mapping._
+_Note: Currently the mapping is purely done based on the position. Editors are not supposed to change the templates (there are 2 available), but some have done so by error or not realising the importance of the problem, so a quick visual check for comparing the header with the expected fields will always be necessary to confirm the correct mapping._
 - upload report
 -- option to ignore specific lines (with errors, empty lines)
 -- option to validate suspect entries (e.g. ignore lines without author info, year 1960a) / correct common errors (e.g. 196O -with letter “O” instead of 1960)
@@ -98,6 +99,67 @@ _Question Sylvain: -further devs?
   to allow to have a package structure which fits well all code
   for example, now, only import but there should be a Web Service for VLIZ shouldn't it?_
 _Answer Aaike: Not entirely sure about this question. But the exchange of the data with VLIZ is outside the scope of this tool._
+
+## Current workflow
+###Foreword
+The workflow as mentionned reflects the current working of FADA import procedure based on the reading of Excel files and the processing of the information through independent Groovy/Ruby apps. It is divided into a number of steps which have to be checked by an operator. The point of the web-application will be to integrate theses steps and add functionalities.
+### Data upload
+The use of Excel files makes it impossible to be certain of the structure of the files that are sent to us. Contributors can make errors in data structure, field positions, start of data in excel sheets, etc. It is therefore necessary for the operator to make sure that the files comply with one of the two templates that have been agreed on. Essentially this is a check of columns and data position.
+
+The upload step is the reading data from Excel files and storing it in tables in a staging area.
+
+Upload happens per group. The files to process are all located in a directory specific of the group (actually named after the group's name) and all loaded one by one.
+The upload process looks for three sheets of data which have specific names. To each sheet corresponds a specific storing and checking process. The data of each sheet is stored in a specific table. <br/>
+During the upload each field is checked for basic errors (number, boolean, dates, empty strings, unwanted characters, use of formulas, etc) but the consistency of the row is also checked (ex : Species with no Genus part). For each row, it's rank (Family, SubFamily, ...) is calculated and added to the row data. Whatever the result the row will be stored in the work tables with the exception of : 
+- Empty rows, which are ignored. 
+- Duplicate rows, for which only the first element will be kept and a message for subsequent rows will be generated. 
+
+Error messages during this step are stored in a table. The error table can store a number of errors per excel file row. 
+The error data mentions :
+- Which excel file has a problem
+- The excel file row of the problem 
+- The field which has the problem
+- The nature of the problem 
+Using this table through a web application will probably require adding some kind of status field for the error.
+
+### Changes in data upload
+Some fields are to be added to upload tables and error tables.
+Mapping and processing will have to be added.
+New error correction, replacing "O" by 0 in date fields "196Oa" => "1960a". 
+
+Since the excel data is being stored whatever the result of the checks it makes sense to have the checks performed on the data in the tables instead of the data being loaded. This change of operations will allow corrections of database data and subsequent checks to be done straight on database data without reloading.
+
+However this is a significant change in upload procedure. Processing the duplicates correctly might have to change.
+### Input file validation
+Validation processes are applied to the taxonomic and distribution data that have been loaded in the staging area.
+####Validation of taxonomic data
+The taxonomic data is organised in rows for declarations per taxonomic level. A row will declare the family F-A. Another row will declare a subfamily SF-A from the family F-A and so on down to the subspecies. So if a record declares species S-A of a genus G-A, there must be some record declaring the existence of the genus G-A. The validation of taxonomic data checks that all of the necessary declaration are there and generates the error messages for cases to be handled by the operator.
+####Changes to validation of taxonomic data
+Could a validation of taxonomic data be performed immediately after Upload?
+The validation process has been designed to be executed as many times as necessary on the Upload data so a call immediately after Upload should not be problematic. Indeed one of the points of the web interface will be for the operator to be able to inject or correct records and perform the validation immediately afterwards.
+####Validation of distribution data
+Distribution data is related to the species declared in taxonomic data. The validation of the distribution data makes sure that the species for which a distribution is mentioned actually exists in the species declared in the taxonomic sheet. Error messages are stored and handled by the operator.
+####Changes to validation of distribution data
+If any changes occur in the taxonomic data to which distribution data is linked they must be reflected in the distribution data. This will not always be easy as the link was up to now established on name comparison and was prone to errors.<br/>
+Can the graphical interface help us with that?
+### Import preview
+The preview consists of a few steps which provide a simulation of injection in the fada schema. Simulation of injection also prepares some data that will be used during injection and has greatly diminished the complexity of the Ruby code. The Preview must be applied to the complete content of data available for a group, data of a number of excel files of the same group will be processed in this step.
+####Checking the new authors
+Authors present in the uploaded data are looked for in the fada database.
+####Changes in checking the new authors
+New authors are never a problem. Authors should be inserted immediately.
+####Checking the synonyms
+Checks which synonyms are new. No changes necessary except maybe adapting the code to a more grailish way.
+####Checking accepted names and original genuses
+In order to do this we start with building a "summary" of the data copied during upload. Actually we build a summary using the part of the uploaded data that matters in the accepted name. The resulting data is also ordered by rank and alphabetically which makes it easier to deal with in further processes.
+Then a species tree is reconstructed and compared to what is present in the fada schema.
+At present the output of this analysis is a text file.
+####Changes in checking accepted names and original genuses
+The main change is that the output of this process will be stored in the staging area.
+This means new tables. The point of this is to use the stored output which mentions differences during the import step. See next step for details.
+### Import
+### Synchronisation between fada and repository
+
 ### List of data validation rules and common errors to be corrected through the interface
 **To be worked out**
 
