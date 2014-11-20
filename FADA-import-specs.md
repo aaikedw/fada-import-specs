@@ -161,9 +161,9 @@ This means new tables. The point of this is to use the stored output which menti
 ### Synchronisation between fada and repository
 
 ### List of data validation rules and common errors to be corrected through the interface
-[Rules for validation of cells read from the excel file](./upload-process/RulesOnExcelDataUpload.md)
-[Processing of taxon rows from the excel file](./upload-process/ProcessingOfTaxonDataRow.md)
-[Processing of distribution rows from the excel file](./upload-process/ProcessingOfDistributionDataRow.md)
+[Rules for validation of cells read from the excel file](./upload-process/RulesOnExcelDataUpload.md)<br/>
+[Processing of taxon rows from the excel file](./upload-process/ProcessingOfTaxonDataRow.md)<br/>
+[Processing of distribution rows from the excel file](./upload-process/ProcessingOfDistributionDataRow.md)<br/>
 
 ## DwC-A processing [Early draft, to be worked out during further discussion]
 ### Current status
