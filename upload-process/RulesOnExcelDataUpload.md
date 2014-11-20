@@ -1,7 +1,7 @@
 # Rules applied on fields when reading excel data
 ## Different checks
 Excel cell type are checked. 
-Anything that is not STRING, NUMERIC OR BLANK is refused 
+Anything that is not STRING, NUMERIC OR BLANK is refused <br/>
 (a date is a NUMERIC)
 
 In "str" fields 
