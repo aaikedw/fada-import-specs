@@ -9,13 +9,13 @@ No 'ILLEGALNONAPLHA' here? Strange, maybe it should be added.
 Check author field. Also corrects case when the content of 'author' is actually a publication year.
 
 ##Error messages
-Rank missing error
+Rank missing error<br/>
 MISSINGMSG = "Distribution element '%s' is missing" 
     
-Something is wrong with taxo element content.
+Something is wrong with taxo element content.<br/>
 PATTERNBREACH = "Value '%s' of field '%s' does not match pattern '%s'"
 
-Author content error
+Author content error<br/>
 AUTHORNUMERIC = "'%s' value '%s' is no author name "
     
 ## Warning messages
