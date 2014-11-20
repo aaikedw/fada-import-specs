@@ -19,5 +19,5 @@ Author content error<br/>
 AUTHORNUMERIC = "'%s' value '%s' is no author name "
     
 ## Warning messages
-WARNINGGENUSLEVEL = "Rank GENUS is suspect in this sheet "
+WARNINGGENUSLEVEL = "Rank GENUS is suspect in this sheet "<br/>
 WARNINGSUBGENUSLEVEL = "Rank SUBGENUS is suspect in this sheet "
