@@ -100,6 +100,10 @@ _Question Sylvain: -further devs?
   for example, now, only import but there should be a Web Service for VLIZ shouldn't it?_
 _Answer Aaike: Not entirely sure about this question. But the exchange of the data with VLIZ is outside the scope of this tool._
 
+## Database
+The tool will import validate and prepare data in a staging area. A schema 'fadaimport' is added in the database to fit this purpose.
+### Database change
+I had named this schema 'importandsyncfada' but it is a long and ugly name.
 ## Current workflow
 ###Foreword
 The workflow as mentionned reflects the current working of FADA import procedure based on the reading of Excel files and the processing of the information through independent Groovy/Ruby apps. It is divided into a number of steps which have to be checked by an operator. The point of the web-application will be to integrate theses steps and add functionalities.
