@@ -27,20 +27,20 @@ Check author field
 Check publication year field
 
 ##Error messages
-Content error
+Content error<br/>
 ILLEGALNONAPLHA = "'%s' value '%s' is non alphabetic or contains any of illegal characters in RExpression '%s' "
 
-Rank missing error
+Rank missing error<br/>
 MISSINGMSG = "Taxon element '%s' is missing" 
     
-Something is wrong with taxo element content.
+Something is wrong with taxo element content.<br/>
 PATTERNBREACH = "'%s' value '%s' does not match pattern '%s'"
 
-Author content error
+Author content error<br/>
 AUTHORNUMERIC = "'%s' value '%s' is no author name "
     
 ## Warning messages
-Parenthesis correction
+Parenthesis correction<br/>
 PARENTHESESCORRECTION = "parenthesis was empty and now set to 'Y', genus : '%s', species : '%s', original genus : '%s', declension species is : '%s'"
 
 PARENTHESESWANRING = "user has set parenthesis to 'N' but this seems wrong, values are, genus : '%s', species : '%s', original genus : '%s', declension species : '%s'."
