@@ -1,8 +1,7 @@
 # Rules applied on fields when reading excel data
 ## Different checks
 Excel cell type are checked. <br/>
-Anything that is not STRING, NUMERIC OR BLANK is refused <br/>
-(a date is a NUMERIC)
+Anything that is not STRING, NUMERIC OR BLANK is refused (a date is a NUMERIC)
 
 In "str" fields 
 Eliminate characters '\n' '\t' '\u00A0'
