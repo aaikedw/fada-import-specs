@@ -60,6 +60,7 @@ Files detailing the business rules:
 
 **@Aaike - Note-to-Self - To Do:**
 - compare business rules in files with what’s below
+- Aaike 12/12: quickly scanned docs, probably need more detail, currently not including actual rules...
 - check business rules with FauEur tool rules
 
 ### 0) Excel files: versions and anticipated database changes
@@ -86,7 +87,7 @@ The tool will import validate and prepare data in a staging area. A schema 'fada
 
 ### 1) Data upload
 The use of Excel files makes it impossible to be certain of the structure of the files that are sent to us. Contributors can make errors in data structure, field positions, start of data in excel sheets, etc. It is therefore necessary for the operator to make sure that the files comply with one of the two templates that have been agreed on. Essentially this is a check of columns and data position. 
-**@Michel: Is the correct alignment of the input file columns checked by the program or visually? I thought not at this stage… if so I’d only discuss this in the “interface” section**
+**@Aaike: Describe new functionality - Checking header rows with expected header rows through interface**
 
 The upload step is the reading data from Excel files and storing it in tables in a staging area.
 
@@ -106,12 +107,13 @@ The error data mentions :
 
 This table is used in the interface so that the operator can check whether it is safe to ignore the returned warning messages and update the original Excel file as needed.
  
-**@Michel: Do you mean these categories are not yet persent in the current table?** Using this table through a web application will probably require adding some kind of status field for the error.
+Using this table through a web application will probably require adding some kind of status field for the error.
+**@Aaike: Adapt Message_type field present but to be reviewed**
 
 #### Changes in data upload to be considered during web-application development
 
-Due to data-structure changes, some fields are to be added to upload tables and error tables. (Make a list for each table, each field and type)
-**@Michel: Related to data upload itself or to expected database changes?**
+Some fields are to be added to upload tables and error tables.
+**Expected database changes (not necessarily related to upload only) - Refer to earlier**
 
 **@Aaike - Note-to-Self: Needs further rewording, restructuring**
 New error correction, replacing "O" by 0 in date fields "196Oa" => "1960a". 
@@ -126,7 +128,7 @@ Validation processes are applied to the taxonomic and distribution data that hav
 
 #### Validation of taxonomic data
 The taxonomic data is organised in rows for declarations per taxonomic level. A row will declare the family F-A. Another row will declare a subfamily SF-A from the family F-A and so on down to the subspecies. So if a record declares species S-A of a genus G-A, there must be some record declaring the existence of the genus G-A. The validation of taxonomic data checks that all of the necessary declarations are there and generates the error messages for cases to be handled by the operator.
-**@Michel: I guess these error messages are stored in a table?**
+**Stored in a table: - errs_validation**
 These types of errors require interference by the operator, but on the other hand, with the exception of author synonym information, the higher level information is replicated on the lines declaring a lower taxonomic level.
 **@Aaike - Note-to-Self: Provide visual example / Example rows**
 
@@ -152,14 +154,15 @@ _Note: If data for a group is distributed over multiple files, the Preview (and 
 Authors present in the uploaded data are looked for in the fada database.
 #### Changes in checking the new authors
 New authors are never a problem. Authors should be inserted immediately.
-**@Michel: Could you explain how this differs with the current situation?**
+**Currently done semi-manually outside of Ruby code - Import preview generates list -> used for INSERT**
 
 #### Checking the synonyms
 Checks which synonyms are new. No changes necessary except maybe adapting the code to a more grailish way.
 **@Aaike - Note-to-Self: …and which ones have been removed?**
 
 #### Checking accepted names and original genuses
-In order to do this we start with building a "summary" of the data copied during upload. Actually we build a summary using the part of the uploaded data that matters in the accepted name. **@Michel: summary = full scientific name or how do these two relate?** The resulting data is also ordered by rank and alphabetically which makes it easier to deal with in further processes.
+In order to do this we start with building a "summary" of the data copied during upload. Actually we build a summary using the part of the uploaded data that matters in the accepted name. **Summary =! full scientific name / all info on Accepted names - unique way taxo columns A-N, lines for synonyms removed- minitaxatable (sorted on rank, name: a-z)** 
+The resulting data is also ordered by rank and alphabetically which makes it easier to deal with in further processes.
 Then a species tree is reconstructed and compared to what is present in the fada schema. **@Aaike - Note-to-Self: CHECK cfr. taxon table??**
 At present the output of this analysis is a text file.
 
@@ -168,9 +171,9 @@ The main change is that the output of this process will be stored in the staging
 This means new tables. The point of this is to use the stored output which mentions differences during the import step. See next step for details.
 
 ### 4) Import
-**@Michel: to be written, currently in Ruby**
+**@Michel: to be written, currently in Ruby - changed using minitaxatable**
 **Potential changes to be discussed: move a way from delete group data, inject and relink to stable identifier tables (the BioFesh-key ones, but use import preview info to update instead.**
-**@Michel, Sylvain: Re-write of Ruby code by Michel or by Sylvain as part of outsourcing?**
+**@Michel, Sylvain: Re-write of Ruby code by Michel or by Sylvain as part of outsourcing? - to be written by Sylvain**
 
 ### 5) Synchronisation with BioFresh register
 
