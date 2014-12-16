@@ -11,12 +11,15 @@ Put any string that is one char long to null if the char is part of list [*+\-=%
 Distribution values are adapted to a/p. <br/>
 Parasitic, values are upper cased and values are checked <br/>
 Parentheses, values are upper cased and values are checked <br/>
-YesNo values are adapted to capital letters and values are checked <br/>
-AquaticWaterDependent values are adapted to capital letters and values are checked
+YesNo values are upper cased and values are checked <br/>
+AquaticWaterDependent are upper cased and values are checked
 
-PublicationYears are checked
+PublicationYears are checked<br/>
+Publication years must fit pattern "yyyy" or "yyyyx" where x is a small alphabetical letter with no accent.<br/>
+Eventual confusion between "O" and "0" must be detected and corrected.<br/>
 
 ##Error messages
+PUBLICATIONYEARCORRECTION = " Publication year '%s' has been corrected to '%s'" <br/>
 BADPUBLICATIONYEAR = " '%d' is no valid publication year" <br/>
 BADPUBLICATIONYEARSTRING = " '%s' is no valid publication year"<br/>
 SHOULDNOTBESTRING = "CellType of type STRING with content : %s ???"<br/>

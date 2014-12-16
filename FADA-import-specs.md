@@ -104,13 +104,13 @@ The error data mentions :
 - The field which has the problem
 - The nature of the problem **@Aaike - Note-to-Self: add categories**
 
-En export of this table is provided to the operator to check whether it is safe to ignore the returned warning messages and update the original Excel file as needed.
+This table is used in the interface so that the operator can check whether it is safe to ignore the returned warning messages and update the original Excel file as needed.
  
 **@Michel: Do you mean these categories are not yet persent in the current table?** Using this table through a web application will probably require adding some kind of status field for the error.
 
 #### Changes in data upload to be considered during web-application development
 
-Some fields are to be added to upload tables and error tables.
+Due to data-structure changes, some fields are to be added to upload tables and error tables. (Make a list for each table, each field and type)
 **@Michel: Related to data upload itself or to expected database changes?**
 
 **@Aaike - Note-to-Self: Needs further rewording, restructuring**
