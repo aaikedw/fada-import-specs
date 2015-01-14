@@ -8,16 +8,16 @@ The FADA initiative and its networking activities involving taxonomic experts le
 Since May 2014, we focus on the FADA database again through the BRAIN AquaRES (Aquatic Register Exchange and Services) project. We aim to improve the FADA database, by both streamlining the database import procedures and setting up data exchange with the World Register of Marine Species (WoRMS) and the Register of Antarctic Marine Species (RAMS). In order to implement this project we are looking to build a web application “FADA import tool” for importing data into the FADA database.
 
 ### Database status
-Currently (18/11/2014), taxonomic checklists for 16 organism groups are published on-line. In total these checklists contain around 47.000 names and thus represent almost 1/3 of the freshwater animal species, which is estimated at roughly 150.000 species. 
+Currently (18/11/2014), taxonomic checklists for 16 organism groups are published on-line. In total these checklists contain around 47.000 names and thus represent almost 1/3 of the number of accepted names for freshwater animal species, which is estimated at roughly 150.000 species. 
 
 ### Organisation in groups
-The organisation by organism group, corresponds to the initial organisation as was adopted for the paper publication. In fact, these groups represent an “operational unit”[^1] for which a taxonomic editor was found to produce an (informed) estimate of the number of known species. These organism groups may represent  different taxonomic levels, e.g. classes, orders or families.
+The organisation by organism group, corresponds to the initial organisation as was adopted for the paper publication. In fact, these groups represent an “operational unit”[^1] for which a taxonomic editor was found to produce an informed estimate of the number of known species. These organism groups may represent  different taxonomic levels, e.g. classes, orders or families.
 
 For database purposes and/or because no taxonomic editor is found to provide a checklist for the entire group, we may subdivide the task and create a new (sub)group. While taxonomically this represents the creation of a real subgroup, we do not aim to introduce any hierarchical structure at the level of the groups themselves, as these remain “operational units” in the first place.
 
-In terms of size the checklist for the different groups vary from not even 100 species names to around 16.000 names for Vertebrates-Fish. Unless, at some stage we will further extend the scope at the database to non-animal freshwater groups (other than the [“Macrophytes”](http://en.wikipedia.org/wiki/Macrophyte) group which is currently included), the total number of (accepted) species is unlikely surpass 200.000 and 16.000 for individual groups in the near future. 
+In terms of size, the checklist for the different groups vary from not even 100 species names to around 16.000 names for Vertebrates-Fish. Unless, at some stage we will further extend the scope at the database to non-animal freshwater groups (other than the [“Macrophytes”](http://en.wikipedia.org/wiki/Macrophyte) group which is currently included), the total number of (accepted) species is unlikely surpass 200.000 and 16.000 for individual groups in the near future. 
 
-[^1]: The “operational unit” can be referred to as “Group”, “Data source” or “Resource”. **@Aaike - Note-to-Self: need to homogenise this throughout the document?**
+[^1]: The “operational unit” can be referred to as “Group”, “Data source” or “Resource”. In this document the term “group” is used to stress the link with taxonomic unit, whereas “resource” is used when discussing the digital representation of such a group (e.g. as an ‘import unit’ and its associated file).
 
 ## Technical background
 The FADA database is managed in PostgreSQL together with the BioFresh occurrence database. The FADA website and the original import scripts were developed in Ruby. The BioFresh portal was developed in the Groovy programming language, and the FADA import scripts were re-written in Groovy. For the BioFresh database, we developed an import tool for occurrence data in collaboration with an external developer (Sylvain Renaudier). In essence, the interface for the FADA import tool will be quite similar to that of the ‘Data Portal Import Tool’ for which I include a number of screenshots in the UI-screenshots folder (1-3).
@@ -29,20 +29,21 @@ The FADA database is managed in PostgreSQL together with the BioFresh occurrence
 _Note: either one of the two import mechanisms will be applicable for a specific group. Excel template import is the default option for our own editors, while DwC-A import is directed towards external datasets, in particular those managed in WoRMS._
 
 ## General user interface
-- The FADA import tool is by definition a backend tool and requires password protection
- -- The impact of implementing a multi-user system (access for taxonomic editors) vs. single or fixed user/password (database managers only) option needs to be discussed and reviewed. The first option would require user management through the interface. (Linked to the user table currently used for the Ruby web-interface?)
-- The user interface should distinguish between the two types of resources: Excel imports and DwC imports (different tab)
-- The application will allow the management of data sources (Excel files and DwC-A-files)
-- The import process will be independently trigger-able for each data source 
-- For each data source a log will be kept
-- The different import tasks have to be performed sequentially, but are actually independent tasks. The operator can stop between any of these step and resume processing at a later stage
-- During the import phase, the user will be presented with a progress bar to indicate which steps have been completed and which tasks are left
+- The FADA import tool is by definition a backend tool and requires password protection.
+ -- The impact of implementing a multi-user system (access for taxonomic editors) vs. single or fixed user/password (database managers only) option needs to be discussed and reviewed. The first option would require user management through the interface. (Linked to the user table currently used for the Ruby web-interface?).
+- The user interface should distinguish between the two types of resources: Excel imports and DwC imports (different tab).
+- The application will allow the management of data sources (Excel files and DwC-A-files).
+- The import process will be independently triggerable for each resource and associated data source .
+- For each resource and associated data source a processing log will be kept, reporting at least the number of lines processed, the number of errors, status information on the processing step indicating successful completion or an error message in case of failure.
+- The different import tasks have to be performed sequentially, but are actually independent tasks. The operator can stop between any of these step and resume processing at a later stage.
+- During the import phase, the user will be presented with a progress bar to indicate which steps have been completed and which tasks are left.
 _Note: General workflow: could use the same setup as for the DPIT with staging and production database. If so preferably using same staging db._
 _Note: Use of ExtJS version to be considered/discussed. Version DPIT tool vs. envisaged version?_
+_See the UI-screenshots folder file 4 (and onwards) for UI-mockups_
 
 ## Current workflow: Excel template processing
 ### Processing steps
-The workflow described here reflects the current FADA import procedure for reading of Excel files. The information in these files is processed through independent Groovy (1-3; 5)/Ruby (4) apps, which represent different processing steps as mentioned below. At present, an operator is required to check the process at each of these steps. The aim of the web-application will be to integrate these steps and add functionalities to speed up the overall processing.
+The workflow described here reflects the current FADA import procedure for reading of Excel files. The information in these files is processed through independent Groovy (1-3; 5) and Ruby (4) apps, which represent different processing steps as mentioned below. At present, an operator is required to check the process at each of these steps. The aim of the web-application will be to integrate these steps and add functionalities to speed up the overall processing. **Check/Discuss** Interface wise, joining the analysis steps 1 to 3 would be the preferred option, but as the processing logic of the individual steps will be kept, these are presented separately.
 
 1) Data upload (including line by line checking), 
 2) Input file validation (including checking of relations), 
@@ -63,12 +64,12 @@ Files detailing the business rules:
 - Aaike 12/12: quickly scanned docs, probably need more detail, currently not including actual rules...
 - check business rules with FauEur tool rules
 
-### 0) Excel files: versions and anticipated database changes
+### Excel files: versions and anticipated database changes
 #### Description of the Excel template and its versions
 **@Aaike - Note-to-Self: Refer to manual, fix versions and make these available on-line (update doc with reference to the versions)**
 - Needed updates (**version 2.1?**): isMarine, isTerrestrial, isBrackish flag
 
-#### Possibility to have multiple files for a single group
+#### Possibility to have multiple files for a single group/resource
 **@Aaike - Note-to-Self: work out**
 - How do they need to be processed? Same metadata, data just split up. Few cases…
 
@@ -85,9 +86,23 @@ Files detailing the business rules:
 
 The tool will import validate and prepare data in a staging area. A schema 'fadaimport' is added in the database to fit this purpose. _Note Michel: Database change – I had named this schema 'importandsyncfada' but it is a long and ugly name. The current name of the schema is 'fadaimport'_
 
-### 1) Data upload
+### Creation of xls resource
+_See the UI-screenshots folder files 5 and 6 for UI-mockups_
+During the creation of an Excel resource, the operator can create a resource for an organism group present in the groups table (cfr. [http://fada.biodiversity.be/group/list?current_page=groups](http://fada.biodiversity.be/group/list?current_page=groups)). 
+In case of an existing group for which information is currently available, the operator will be presented with a warning to highlight the fact that this resource already exists. Further processing will not create a new resource, but continue with the review of metadata and upload of an Excel file using the existing info on the resource (also allowing it to be updated). 
+For a group present in the list, metadata present in the group-table will be included in the dialog and can be reviewed and completed at this stage. For a new resource, these fields will be empty and need to be filled. With the exception of the field “co-editors”, this information is mandatory.
+We propose to include file upload as part of resource creation. In case of file upload errors, the application should offer a retry option before closing the resource creation window and process.
+
+### Checking column mapping
+_See the UI-screenshots folder files 7 and 8 for UI-mockups_
 The use of Excel files makes it impossible to be certain of the structure of the files that are sent to us. Contributors can make errors in data structure, field positions, start of data in excel sheets, etc. It is therefore necessary for the operator to make sure that the files comply with one of the two templates that have been agreed on. Essentially this is a check of columns and data position. 
-**@Aaike: Describe new functionality - Checking header rows with expected header rows through interface**
+
+
+
+### Data load
+
+### 1) Data upload
+
 
 The upload step is the reading data from Excel files and storing it in tables in a staging area.
 
