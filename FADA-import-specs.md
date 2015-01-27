@@ -1,4 +1,7 @@
 # Draft specifications FADA import tool
+**This is a deprecated version of the specification document!** 
+
+_Note that this is an earlier version of the specification document. As this version focussed heavily on the existing scripts and workflow, I decided to start anew in the file “[**FADA-import-specs-new.md**](./FADA-import-specs-new.md)” to describe the desired functionality instead of trying to describe all details of the original workflow. As the new version is building on what was written earlier, certain sections -such as the Background- may be mere copies of this document._
 ## Background
 ### Project status
 The Freshwater Animal Diversity Assessment (FADA) database was constructed in 2009 following the publication of a special issue in which taxonomic experts described the biodiversity of around 60 organism groups. This work was funded by Belspo and supported by the Belgian Biodiversity Platform.
@@ -97,21 +100,17 @@ We propose to include file upload as part of resource creation. In case of file 
 _See the UI-screenshots folder files 7 and 8 for UI-mockups_
 The use of Excel files makes it impossible to be certain of the structure of the files that are sent to us. Contributors can make errors in data structure, field positions, start of data in excel sheets, etc. It is therefore necessary for the operator to make sure that the files comply with one of the two templates that have been agreed on. Essentially this is a check of columns and data position. 
 
-
-
-### Data load
-
+### Data load & processing
 ### 1) Data upload
-
-
 The upload step is the reading data from Excel files and storing it in tables in a staging area.
 
-Upload happens per group. The files to process are all located in a directory specific of the group (actually named after the group's name) and all loaded one by one.
-The upload process looks for three sheets of data which have specific names. To each sheet corresponds a specific storing and checking process. The data of each sheet is stored in a specific table.
+Upload happens per group. The files to process are all located in a directory specific for the group/resource (named after the group's name) and all loaded one by one.
+The upload process looks for three sheets of data are identified based on their names, which can already be validated while checking the column mapping. Each sheet – “Taxonomy”, “Faunistic” and “References” respectively – corresponds a specific checking process and is stored in a dedicated import table **Specify names and schema**.
 
-During the upload each field is checked for basic errors (number, boolean, dates, empty strings, unwanted characters, use of formulas, etc) but the consistency of the row is also checked (ex : Species with no Genus part). For each row, it's rank (Family, SubFamily, ...) is calculated and added to the row data. Whatever the result the row will be stored in the work tables with the exception of : 
+During the upload, each row is checked for basic errors, both within individual fields (number, boolean, dates, empty strings, unwanted characters, use of formulas, etc), as well as the consistency of the row (e.g.: if the “Species” field is provided, the “Genus” field cannot be empty). For each row, it's rank (Family, SubFamily, ...) is calculated and added to the row data **Check: Where, which table, field? Needs to be specified**. Whatever the result the row-by-row checking, its content will be stored in the import tables with the exception of : 
 - Empty rows, which are ignored. 
 - Duplicate rows, for which only the first element will be kept and a message for subsequent rows will be generated. 
+**The following errors can be auto-corrected** and only need to be logged in the error message table…
 
 Error messages during this step are stored in a table (**name**). The error table can store a number of errors per excel file row. 
 The error data mentions :
@@ -133,37 +132,39 @@ Some fields are to be added to upload tables and error tables.
 **@Aaike - Note-to-Self: Needs further rewording, restructuring**
 New error correction, replacing "O" by 0 in date fields "196Oa" => "1960a". 
 
-Since the excel data is being stored whatever the result of the checks it makes sense to have the checks performed on the data in the tables instead of the data being loaded. This change of operations will allow corrections of database data and subsequent checks to be done straight on database data without reloading.
+**Relevant only when starting from Michels code - would this be the case for this processing step?>>** Since the excel data is being stored whatever the result of the checks it makes sense to have the checks performed on the data in the tables instead of the data being loaded. This change of operations will allow corrections of database data and subsequent checks to be done straight on database data without reloading.
 
 However this is a significant change in upload procedure. Processing the duplicates correctly might have to change.
 
 
 ### 2) Input file validation
-Validation processes are applied to the taxonomic and distribution data that have been loaded in the staging area.
+Validation processes for checking the consistency within and among sheets are applied to the taxonomic and distribution data that have been loaded in the staging area.
 
 #### Validation of taxonomic data
-The taxonomic data is organised in rows for declarations per taxonomic level. A row will declare the family F-A. Another row will declare a subfamily SF-A from the family F-A and so on down to the subspecies. So if a record declares species S-A of a genus G-A, there must be some record declaring the existence of the genus G-A. The validation of taxonomic data checks that all of the necessary declarations are there and generates the error messages for cases to be handled by the operator.
+The taxonomic data is organised as such that each row represents a declarations for one particular taxonomic level. Typically one row will declare the family F-A. Another row will declare a subfamily SF-A from the family F-A and so on down to the subspecies. So if a record declares species S-A of a genus G-A, there must be some record declaring the existence of the genus G-A. The validation of taxonomic data checks that all of the necessary declarations are present and generates the error messages for cases to be handled by the operator.
 **Stored in a table: - errs_validation**
-These types of errors require interference by the operator, but on the other hand, with the exception of author synonym information, the higher level information is replicated on the lines declaring a lower taxonomic level.
+These types of errors require interference by the operator, but on the other hand, with the exception of author synonym information, the higher level information is generally replicated on the lines declaring a lower taxonomic level.
 **@Aaike - Note-to-Self: Provide visual example / Example rows**
 
 #### Changes to validation of taxonomic data
-**@Aaike - Note-to-Self: reflected in UI choices? Move discussion there…**
-Could a validation of taxonomic data be performed immediately after Upload?
-The validation process has been designed to be executed as many times as necessary on the Upload data so a call immediately after Upload should not be problematic. Indeed one of the points of the web interface will be for the operator to be able to inject or correct records and perform the validation immediately afterwards.
+**@Aaike - Note-to-Self: reflected in UI choices? Move discussion there… Mentioned earlier - can be deleted.** 
+[Could a validation of taxonomic data be performed immediately after Upload?
+The validation process has been designed to be executed as many times as necessary on the Upload data so a call immediately after Upload should not be problematic. Indeed one of the points of the web interface will be for the operator to be able to inject or correct records and perform the validation immediately afterwards.]
 
 #### Validation of distribution data
 Distribution data is related to the species declared in taxonomic data. The validation of the distribution data makes sure that the species for which a distribution is mentioned actually exists in the species declared in the taxonomic sheet. Error messages are stored and handled by the operator.
 
 #### Changes to validation of distribution data
 **@Aaike - Note-to-Self: Example of typical error… Needs some rewording/clarification**
-If any changes occur in the taxonomic data to which distribution data is linked they must be reflected in the distribution data. This will not always be easy as the link was up to now established on name comparison and was prone to errors.
+[If any changes occur in the taxonomic data to which distribution data is linked they must be reflected in the distribution data. This will not always be easy as the link was up to now established on name comparison and was prone to errors. **Would be a case where the operator can easily spot the changes during the import preview**
 
-Can the graphical interface help us with that?
+Can the graphical interface help us with that?]
+Currently the validation process will produce an error if a species has not been validly declared (i.e. higher taxonomic levels missing/not correctly declared) , as this needs to be corrected anyway, if the process detects the species in the taxonomy sheet, this should be sufficient in my view.
 
 ### 3) Import preview
 The preview consists of a few steps which provide a simulation of injection in the fada schema. Simulation of injection also prepares some data that will be used during injection and has greatly diminished the complexity of the Ruby code. 
 _Note: If data for a group is distributed over multiple files, the Preview (and earlier processing) must be applied for all files at once in this step._
+**Check with Michel whether correct**: Running the import preview only makes sense for updates, as for new groups, all data will be new.
 
 #### Checking the new authors
 Authors present in the uploaded data are looked for in the fada database.
