@@ -22,7 +22,7 @@ In terms of size, the checklist for the different groups vary from not even 100 
 [^1]: The “operational unit” can be referred to as “Group”, “Data source” or “Resource”. In this document the term “group” is used to stress the link with taxonomic unit, whereas “resource” is used when discussing the digital representation of such a group (e.g. as an ‘import unit’ and its associated file).
 
 ## Technical background
-The FADA database is managed in PostgreSQL together with the BioFresh occurrence database. The FADA website and the original import scripts were developed in Ruby. The BioFresh portal was developed in the Groovy programming language, and the FADA import scripts were re-written in Groovy. For the BioFresh database, we developed an import tool for occurrence data in collaboration with an external developer (Sylvain Renaudier). In essence, the interface for the FADA import tool will be quite similar to that of the ‘Data Portal Import Tool’ for which I include a number of screenshots in the UI-screenshots folder (1-3).
+The FADA database is managed in PostgreSQL together with the BioFresh occurrence database. The FADA website and the original import scripts were developed in Ruby. The BioFresh portal was developed in the Groovy programming language, and the FADA import scripts were re-written in Groovy. For the BioFresh database, we developed an import tool for occurrence data in collaboration with an external developer (Sylvain Renaudier). In essence, the interface for the FADA import tool will be quite similar to that of the ‘Data Portal Import Tool’.
 
 ## Envisaged components of the FADA import tool
 1. Excel template data entry and update interface for FADA checklists
@@ -41,19 +41,16 @@ _Note: either one of the two import mechanisms will be applicable for a specific
 - During the import phase, the user will be presented with a progress bar to indicate which steps have been completed and which tasks are left.
 _Note: General workflow: could use the same setup as for the DPIT with staging and production database. If so preferably using same staging db._
 _Note: Use of ExtJS version to be considered/discussed. Version DPIT tool vs. envisaged version?_
-_See the UI-screenshots folder file 4 (and onwards) for UI-mockups_
-
-## Excel template processing
-
-Re-write text from earlier specifications document.
+_See the UI-screenshots-new folder for UI-mockups_
 
 ## DwC-A processing
 
 ### Current status
 We have selected the required fields for data exchange in the framework AquaRES and have received a sample export from VLIZ. Import scripts have to be constructed.
 _The DwC-A files will be posted on a web address. From our side this may be on an IPT (but these are exports from us and thus do not need to be read by the tool), but I doubt this will be the case for VLIZ. As we are still discussing this, we could of course suggest a way which would make our life easier._
-### Interface
-- choose group (dropdown) and indicate whether it concerns a new checklist or an updated one / + option to create a new (sub)group
+
+### Main processing steps
+- creating resource
 - validate that the EML metadata contains the necessary metadata for completing details in the FADA group table (check/enter for FADA specific metadata: editor, co-editor, checklist name,…)
 - data load
 - validation
@@ -64,3 +61,16 @@ _The DwC-A files will be posted on a web address. From our side this may be on a
 **Shared with Excel template processing**
 - (re)linking to ‘biofresh key’ tables and re-generation of genus-to-families table
 - propagation of changes to BioFresh species register
+
+### Overall interface
+
+Mock-up: ./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg
+
+### Creating resource
+choose group (dropdown) and indicate whether it concerns a new checklist or an updated one / + option to create a new (sub)group
+
+Mock-up: ./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg
+
+## Excel template processing
+
+Re-write text from earlier specifications document.
