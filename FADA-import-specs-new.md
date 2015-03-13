@@ -1,8 +1,6 @@
 # Draft specifications FADA import tool
 ## Background
 ### Project status
-## Background
-### Project status
 The Freshwater Animal Diversity Assessment (FADA) database was constructed in 2009 following the publication of a special issue in which taxonomic experts described the biodiversity of around 60 organism groups. This work was funded by Belspo and supported by the Belgian Biodiversity Platform.
 
 The FADA initiative and its networking activities involving taxonomic experts led to a follow-up initiative in the form of the EU FP7 project BioFresh (Biodiversity of Freshwater Ecosystems: Status, Trends, Pressures, and Conservation Priorities; [http://www.freshwaterbiodiversity.eu/](http://www.freshwaterbiodiversity.eu/)), for  which RBINS was in charge of constructing a data portal. This project ended officially in April 2014, but we are currently (September 2014) finalising the last technical updates (including the implementation of a ‘Data Portal Import Tool’).
@@ -46,7 +44,7 @@ _See the UI-screenshots-new folder for UI-mockups_
 ## DwC-A processing
 
 ### Current status
-We have selected the required fields for data exchange in the framework AquaRES and have received a sample export from VLIZ. Import scripts have to be constructed.
+We have selected the required fields for data exchange in the framework AquaRES and have received a sample export from VLIZ. See the [./DwC-file_processing/DwC-AquaRES_field_selection.xlsx](./DwC-file_processing/DwC-AquaRES_field_selection.xlsx) file Import scripts have to be constructed.
 _The DwC-A files will be posted on a web address. From our side this may be on an IPT (but these are exports from us and thus do not need to be read by the tool), but I doubt this will be the case for VLIZ. As we are still discussing this, we could of course suggest a way which would make our life easier._
 
 ### Main processing steps
@@ -64,13 +62,37 @@ _The DwC-A files will be posted on a web address. From our side this may be on a
 
 ### Overall interface
 
-Mock-up: ./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg
+Mock-up: [./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg](./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg)
 
 ### Creating resource
 choose group (dropdown) and indicate whether it concerns a new checklist or an updated one / + option to create a new (sub)group
 
-Mock-up: ./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg
+Mock-up: [./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg](./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg)
+
+### Validating/editing metadata
+separate metadata module (independent of import type?)
+
+### Data load
+Load data in flat taxon, speciesProfile, Reference and Distribution table in staging area.
+
+### Validation
+- Check whether mandatory fields are present
+- Check whether content of fields corresponds to expected format (e.g. year >1730, <current year + 1, format year with/without single character such as 1999a)
+- Checking for unique taxonIDs in taxon table
+- Check whether acceptedNameUsageID and parentNameUsageID refer to taxonIDs present in taxon table
+- Checking whether taxonIDs/coreIDs in extension tables correspond to taxonIDs in taxon table
+- Check whether scientificNames with taxonRank > family need to be added or are already present (check for conflicts)
+- Check whether scientificNames with taxonRank =< family are new or are updated
+- Check wether data for higher taxonomic levels is correctly declared; genus requires family, species requires genus, subspecies requires specificEpithet.
+[Provide visual example]
+
+Records can either be 
+__NEW__: Alert the operator that this is new (unless it is an entirely new group).
+__UPDATED__: Associated information added (e.g. distribution and speciesProfile data previously not available). Alert operator, but in principle no need for interactive functions for these records.
+__POTENTIAL CONFLICT__: E.g. records with same id as already existing taxon, but different name; same name already present under different ID, same name present as synonym/accepted name. Need for review interface.
+
 
 ## Excel template processing
 
-Re-write text from earlier specifications document.
+Re-write text from earlier specifications document. 
+**Discuss preference with Sylvain: As separate contract or in one go?**
