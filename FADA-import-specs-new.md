@@ -1,11 +1,14 @@
 # Specifications FADA import tool
+_Version 10/04/2015_ 
+_Authors: Aaike De Wever, Michel Kapel_
+This document is used for launching a call for offers for developing the FADA import tool. This document is intended as a guidance for constructing the web application, but as it consists of a complex database and the reconciliation of the needs from ‘biologist’ users and the technical needs and possibilities, it is likely that specific requirements will have to be clarified and refined along the way.
 Supporting material for this specification document can be consulted at [https://github.com/aaikedw/fada-import-specs](https://github.com/aaikedw/fada-import-specs).
 
 ## 1. General background information
 ### 1.1 Project status
-The Freshwater Animal Diversity Assessment (FADA) database was constructed in 2009 following the publication of a special issue in which taxonomic experts described the biodiversity of around 60 organism groups. This work was funded by Belspo and supported by the Belgian Biodiversity Platform.
+The Freshwater Animal Diversity Assessment (FADA) database was constructed in 2009 following the publication of a special issue  of the scientific journal _Hydrobiologia_ in which taxonomic experts described the biodiversity of around 60 organism groups. This work was funded by Belspo and supported by the Belgian Biodiversity Platform.
 
-The FADA initiative and its networking activities involving taxonomic experts led to a follow-up initiative in the form of the EU FP7 project BioFresh (Biodiversity of Freshwater Ecosystems: Status, Trends, Pressures, and Conservation Priorities; [www.freshwaterbiodiversity.eu/](http://www.freshwaterbiodiversity.eu/)), for  which RBINS was in charge of constructing a data portal. This project ended officially in April 2014, but we are currently (September 2014) finalising the last technical updates (including the implementation of a ‘Data Portal Import Tool’).
+The FADA initiative and its networking activities involving taxonomic experts led to a follow-up initiative in the form of the EU FP7 project BioFresh (Biodiversity of Freshwater Ecosystems: Status, Trends, Pressures, and Conservation Priorities; [www.freshwaterbiodiversity.eu/](http://www.freshwaterbiodiversity.eu/)), for  which RBINS was in charge of constructing a data portal. This project ended officially in April 2014, but we have recently (Spring 2015) finalised the last technical updates (including the implementation of a ‘Data Portal Import Tool’ – DPIT).
 
 Since May 2014, we focus on the FADA database again through the BRAIN AquaRES (Aquatic Register Exchange and Services) project – [odnature.naturalsciences.be/aquares]([http://odnature.naturalsciences.be/aquares). We aim to improve the FADA database, by both streamlining the database import procedures and setting up data exchange with the World Register of Marine Species (WoRMS) and the Register of Antarctic Marine Species (RAMS). In order to implement this project, we are looking to build a web application “FADA import tool” for importing data into the FADA database.
 
@@ -26,9 +29,9 @@ In terms of size, the checklist for the different groups vary from not even 100 
 The FADA database is managed in PostgreSQL together with the BioFresh occurrence database. The FADA website and the original import scripts were developed in Ruby. The BioFresh portal was developed in the Groovy programming language. 
 
 ### 2.2 Existing data import tools
-For the BioFresh database, we developed an import tool for occurrence data in collaboration with an external developer (Sylvain Renaudier). In essence, the interface for the FADA import tool will be quite similar to that of the ‘Data Portal Import Tool’. See screenshots in the UI-screenshots folder (1-3).
+For the BioFresh database, we developed an import tool for occurrence data in collaboration with an external developer (Sylvain Renaudier). In essence, the interface for the FADA import tool will be quite similar to that of the ‘Data Portal Import Tool’ (DPIT). See screenshots in the UI-screenshots folder (1-3).
 
-For importing data into the FADA database, original Excel-file import scripts were developed in Ruby. With the exception of the  scripts for injecting the data into the database tables, the FADA import scripts were re-written in Groovy. Procedures and scripts for importing Darwin Core-Archive (DwC-A) data in FADA have to be developed.
+For importing data into the FADA database, original Excel-file import scripts were developed in Ruby. With the exception of the  scripts for injecting the data into the database tables, the FADA import scripts were re-written in Groovy. Procedures and scripts for importing Darwin Core-Archive (DwC-A) data in FADA have to be developed from scratch.
 
 ### 2.3 FADA database structure and planned changes
 #### SQL scripts current database structure
@@ -39,60 +42,60 @@ The FADA database structure is described at the [BioFresh-wiki](http://trac.bebi
 
 The original database structure was elaborated to accommodate a hierarchical browsing tool through the FADA web application (see [FADA Taxonomic Tree browser](http://fada.biodiversity.be/taxon/browse/-1?current_page=browse)). Imports were seen as a one-shot thing, where updates would be preceded by a complete deletion of the earlier data, without the need for permanent identifiers. Through BioFresh and exchange projects, the use of the database was widened, and there was a need to introduce more permanent identifiers in order to link the FADA database to the BioFresh species register (hence the _biofresh_key_ tables), and to facilitate the export of the hierarchical data into a flat, denormalised format (hence the _genus_to_family_ table and the _fst_for_genus_ and _fst_for_tribe_ views).
 
-While the organisation of the database may be improved in certain areas, we should maintain the compatibility with the original FADA website [fada.biodiversity.be/](http://fada.biodiversity.be/), as we currently have no plans to rework this application. E.g. while the tables with regards to “observations” are barely used, these correspond to an option in the FADA interface, which we don’t want to break at the moment, and thus should leave those tables untouched…
+While the organisation of the database may be improved in certain areas, we should maintain the compatibility with the original FADA website [fada.biodiversity.be/](http://fada.biodiversity.be/), as we currently have no plans to rework this application. E.g. while the tables with regards to “observations” are barely used, these correspond to an option in the FADA interface, which we don’t want to break at the moment, and thus should leave those tables untouched.
 
-#### Maintaining compatibility with the FADA web-app
-**business rules to be written**
+This means that potential improvements are (in addition to the modifications mentioned below) basically related to the organismtion of the _biofresh_key_-tables and the flat taxon tables. The “biofresh keys” could be integrated in the taxon, species and synonym table eliminating the need for specific tables (this would require a small change in the portal app and export scripts). Instead of having a combination of the the _genus_to_family_ table and the _fst_for_genus_ and _fst_for_tribe_ views, we could opt for extending the _taxons_ table with a flat version of the complete taxonomic hierarchy (thus adding the fields: kingdom, class, order, family,… genus, specificEpithet, infraspecificEpithet).
+
 
 #### Planned and needed changes in terms of database structure 
-In addition to expected changes due to the implementation of a FADA-import tool with its own progress and log database tables, we foresee the need for specific changes based on the expectations with regards to the DwC-A exchange format (see 4.1) and certain requests from our editors (categories for aquatic/water dependent species). These changes include the need for the following fields/tables;
-- a record level “modified” timestamp, this could be coupled to the import log timestamp
-- The isMarine, isTerrestrial, isBrackish fields/flags (also to be added to the xls-template) and “Freshwater aquatic/water dependent” category and subcategory (in xls-template, but currently not stored in the database itself (other than in the import “distr_table”)).
-- While the species table currently contains a “status_id” field and the entries in the synonyms table are by definition all invalid, subjective synonyms, this is not a straightforward solution to provide the “taxonomicStatus” in the DwC-A-export (esp. for providing the “original combination” or “objective synonym”/“basionym” or “homotypic synonym” - terms respectively used in zoology/botany). A solution for this issue should be considered while addressing the FADA database structure. The main question will be whether this issue can be solved without breaking the backward compatibility with the FADA app.
+In addition to expected changes due to the implementation of a FADA-import tool with its own progress and log database tables, we foresee the need for specific changes based on the required fields to implement the data exchange using the DwC-A exchange format (see 4.1) and certain requests from our editors (categories for aquatic/water dependent species). These changes include the need for the following fields/tables;
+- A record level “modified” timestamp, this could be coupled to the import log timestamp
+- The isFreshwater (default yes for FADA datasets), isMarine, isTerrestrial, isBrackish fields/flags (also to be added to the xls-template) and “Freshwater aquatic/water dependent” category and subcategory (in xls-template, but currently not stored in the database itself (other than in the import “distr_table”)). This could be either implemented in the species table or a separate table (cfr. the regions table).
 - Need to conserve “provider IDs” for taxons and species names need to be considered. Can this be done by updating the “biofresh key”-tables or should we work out another solution?
+- Extend groups table with selected metadata fields from DwC-A EML including; alternateIdentifier for datasetID/URL, keywords and keywordThesaurus, intellectualRights and bibliographicCitation for the dataset as a whole and the URL/location of full EML metadata.
+
+In addition to the required changes described above, we identified a number of issues that merit to be considered to facilitate future developments;
+- While the species table currently contains a “status_id” field and the entries in the synonyms table are by definition all invalid, subjective synonyms, this is not a straightforward solution to provide the “taxonomicStatus” in the DwC-A-export (esp. for providing the “original combination” or “objective synonym”/“basionym” or “homotypic synonym” - terms respectively used in zoology/botany). A solution for this issue should be considered while addressing the FADA database structure. The main question will be whether this issue can be solved without breaking the backward compatibility with the FADA app.
 - Bibliographic references are currently organised in 2 tables, _greferences_ for references pertaining to a group and _publications_ linked to individual species (and Rotifera references to be imported are still in a separate schema). Although joining these tables at this stage may not be an option due to the need for backward compatibility, their integration will likely be considered in the future.
-- Extend groups table with selected metadata fields from DwC-A EML including; alternateIdentifier for datasetID/URL, keywords and keywordThesaurus, intellectualRights and bibliographicCitation for the dataset as a whole. **+ URL/location of full EML metadata?**
 
 ### 2.4 “biofresh keys” as persistent identifiers and the link between the FADA database and the BioFresh species register
-As mentioned under 2.3, the “biofresh key” tables originated from the need to have a (more) permanent identifier to establish a link between the FADA database and the BioFresh species register. At this stage there are 3 tables; _biofresh_key_species_, _biofresh_key_synonyms_, _biofresh_key_taxons_, each consisting of an id (considered as “biofresh key”), the id in the respective table for species, synonyms or taxons and the scientific name and/or other crucial data to establish the link with the original tables. Currently, during each update, the ids for the original tables are removed and the new ids are re-established through name-matching. In case of changes in the spelling of the scientific name or changes in the (parentheses of) authorship, this field is updated in the biofresh_key table. **Need to check, validate this with Michel!**  If we design the import tools so that they only update the changed records, we could eliminate the need to get rid of the deletion of the original ids.
+As mentioned under 2.3, the “biofresh key” tables originated from the need to have a (more) permanent identifier to establish a link between the FADA database and the BioFresh species register. At this stage there are 3 tables; _biofresh_key_species_, _biofresh_key_synonyms_, _biofresh_key_taxons_, each consisting of an id (considered as “biofresh key”), the id in the respective table for species, synonyms or taxons and the scientific name and/or other crucial data to establish the link with the original tables. Currently, during each update, the ids for the original tables are removed and the new ids are re-established through name-matching. In case of changes in the spelling of the scientific name or changes in the (parentheses of) authorship, this field is updated in the _biofresh_key_ table. 
+If we design the import tools so that they only update the changed records, we could eliminate the need to get rid of the deletion of the original ids. By integrating the “biofresh keys” in the _species_, _taxons_ and _synonyms_ table as discussed under 2.3, we would further eliminate the need to update those tables separately.
 
-The link between the BioFresh species register and the FADA schema are covered by the “biofreshdatasources” table where register.biofreshspeciesregistry.id = register.biofreshdatasources.fkbiofreshid AND register.biofreshdatasources.intdatasourcekey = fada.biofresh_key[_species].id. These links remain stable, except if a species name is synonymized and the  link to the fada.biofresh_key_species.id needs to be replaced by the fada.biofresh_key_synonym.id.
+The link between the BioFresh species register and the FADA schema are covered by the “biofreshdatasources” table (see definition in [./database-info/register-tables](./database-info/register-tables)) where register.biofreshspeciesregistry.id = register.biofreshdatasources.fkbiofreshid AND register.biofreshdatasources.intdatasourcekey = fada.biofresh_key[_species].id. These links remain stable, except if a species name is synonymized and the  link to the fada.biofresh_key_species.id needs to be replaced by the fada.biofresh_key_synonym.id.
 
-**confirm table names with Michel and add biofreshspeciesregistry and biofreshdatasources to GitHub folder ./database-info/register-tables**
-
-For new species names added to the FADA database, their presence in the BioFresh species register needs to be checked (as this register can be populated through other sources) based on the group and species name matching (both exact and phonetic).
+For new species names added to the FADA database, their presence in the BioFresh species register needs to be checked (as this register can be populated through other sources) based on the group and species name matching (both exact and phonetic). See further details under 6.2.
 
 ## 3. Overall FADA import tool specifications
 
 ### 3.1 Envisaged components of the FADA import tool
-Data for import into the FADA database will either be available in one of the following formats, which each represent a different _data import module_;
+Data for import into the FADA database will either be available in one of the following formats, which each represent a different _data import module_ (corresponding to different “tabs” in the main interface);
 1. Data import interface for organism group-data provided in DwC-A format (for externally managed datasets, in particular those coming from WoRMS)
 2. Excel template data entry and update interface for FADA checklists (default option for FADA editors)
 
-Note however that, while data for a group is either present in the database as a “DwC-A” or an “Excel” resource, at some stage we may choose to “throw out” the data imported through an xls-file and import a checklist for a group in DwC-A (if this would be a more complete/trustworthy checklist for example), so there should be a mechanism to delete the data associated with a Excel/DwC-A resource and replace it by a DwC-A/Excel one (could be just creation of a new resource).
+_Note however that, while data for a group is either present in the database as a “DwC-A” or an “Excel” resource, at some stage we may choose to “throw out” the data imported through an xls-file and import a checklist for a group in DwC-A (if this would be a more complete/trustworthy checklist for example), so there should be a mechanism to delete the data associated with a Excel/DwC-A resource and replace it by a DwC-A/Excel one (could be just creation of a new resource)._
 
 These two modules need to be integrated in a joint interface with the following _shared components_: 
-1. Resource metadata entry and edit module (but called as first step in each module)
+1. Resource metadata entry and edit module
 2. Functions for synchronising the data imported into the FADA database/schema with the BioFresh species register table
 3. Synchronise the staging database with the production database
 
 ### 3.2 General user interface
-- The FADA import tool is by definition a backend tool and requires password protection, a single or fixed user/password (database managers only) should be sufficient in the framework of the current project.
+- The FADA import tool is by definition a backend tool and requires password protection. A single or fixed user/password (database managers only) should be sufficient in the framework of the current project.
 - The user interface should distinguish between the two types of resources: Excel imports and DwC imports (different tab).
 - The application will allow the management of data sources (Excel files and DwC-A-files).
-- The import process will be independently triggerable for each resource and associated data source .
+- The import process will be independently trigger-able for each resource and associated data source .
 - For each resource and associated data source a processing log will be kept, reporting at least the number of lines processed, the number of errors, status information on the processing step indicating successful completion or an error message in case of failure.
 - The different import tasks have to be performed sequentially, but are actually independent tasks. The operator can stop between any of these step and resume processing at a later stage.
 - During the import phase, the user will be presented with a progress bar to indicate which steps have been completed and which tasks are left.
-_Note: General workflow: could use the same setup as for the DPIT with staging and production database. If so preferably using same staging db._
-_Note: Use of ExtJS version to be considered/discussed. Version DPIT tool vs. envisaged version?_
+- The previously developed Data Portal Import Tool (DPIT) uses ExtJS version 3.4, the investment of moving to a more recent version (4.2 or up) should be considered  in relation to the potential for integration with and re-use of code from the DPIT on one hand vs. the future cost of maintenance.
+- General workflow: Similar to the DPIT, the FADA import tool acts on a staging database, which can easily be copied/synced with the production database. If feasible, we would opt to use the same staging database.
 
 See the UI-screenshots-new folder for UI-mockups. The mock-up [./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg](./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg) shows the organisation of the two modules in tabs.
 
 ## 4. DwC-A processing module specifications
 ### 4.1 Envisaged data input format and file location
-Input files for Darwin Core-Archive (DwC-A) will obviously be a zipped archive as specified by GBIF (see [here](https://code.google.com/p/gbif-ecat/wiki/DwCArchive)), but will be restricted to files with a “taxon core” and not all Darwin Core fields are intended to be imported in the database. We have selected the required fields for data exchange in the framework AquaRES and have received a sample export from VLIZ. See the [./DwC-file_processing/DwC-AquaRES_field_selection.xlsx](./DwC-file_processing/DwC-AquaRES_field_selection.xlsx) file. Selected data fields and extension files will not be mapped to the FADA database, e.g. “nomenclaturalCode” and the “vernacularName” extension. Import scripts have to be constructed.
-**Note-to-self: add WoRMS example from http://www.marinespecies.org/export/fada/ to GitHub**
+Input files for Darwin Core-Archive (DwC-A) will obviously be a zipped archive as specified by GBIF (see [here](https://code.google.com/p/gbif-ecat/wiki/DwCArchive)), but will be restricted to files with a “taxon core” and not all Darwin Core fields are intended to be imported in the database. We have selected the required fields for data exchange in the framework AquaRES and have received a sample export from VLIZ. See the [./DwC-file_processing/DwC-AquaRES_field_selection.xlsx](./DwC-file_processing/DwC-AquaRES_field_selection.xlsx) file. Selected data fields and extension files will not be mapped to the FADA database, e.g. “nomenclaturalCode” and the “vernacularName” extension. Import scripts have to be constructed. An example export from WoRMS can be provided on request.
 _The DwC-A files will be posted on a web address. From our side this may be on an IPT (but these are exports from us and thus do not need to be read by the tool), but I doubt this will be the case for VLIZ. As we are still discussing this, we could of course suggest a way which would make our life easier._
 
 ### 4.2 Main processing steps
@@ -100,13 +103,12 @@ _The DwC-A files will be posted on a web address. From our side this may be on a
 - creating resource and validating metadata (see 4.3)
 - data load (see 4.4)
 - validation (see 4.5)
--- option to ignore errors
--- option to ignore specific lines (with errors)
-- import data
+- inject data (see 4.6)
 
 #### Processing shared with Excel template processing (see section 6)
-- (re)linking to ‘biofresh key’ tables and re-generation of genus-to-families table
+- (re)linking to ‘biofresh key’ tables and re-generation of genus-to-families table (but ideally part of the data injection)
 - propagation of changes to BioFresh species register
+- synchronisation of staging and production database
 
 ### 4.3 Creating resource and validating/editing metadata
 The mock-up [./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg](./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg) shows the tab for the DwC-import module. Hitting the “Add DwC-A resource should bring up a dialog to choose the concerned organism group (dropdown) and to indicate whether it concerns a new checklist (entirely new or as a (sub)group of and existing one) or an updated one. See mock-up [./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg](./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg). 
@@ -118,6 +120,13 @@ Load data in flat taxon, speciesProfile, Reference and Distribution table in sta
 
 ### 4.5 Validation
 #### Data in staging tables
+_Note: while the validation will act on different tables and fields, and might be slightly different for the DwC-A vs. xls processing, the “business logic” and validation steps are the same, and can thus be organised in a way that the validation steps can be called by the two processing modules._
+- The first “checks” are not really part of the validation process, but are rather “data cleaning’ to facilitate further processing. These modifications can be performed automatically and reported in the logs, but do not need to generate a warning or require intervention of the operator. These include;
+-- Eliminate empty rows
+-- Eliminate duplicate rows (keeping only first one
+-- Eliminate characters ‘\n’ ‘\t’ ‘\u00A0’ and multiple blanks
+-- Check for accidental use of “o” instead of “0” and vice versa. E.g. use of “o” in year (199o), use of “0” in latin-only fields (spin0sus). Replace where detected.
+
 - Check whether mandatory fields are present (see overview of DwC-field recommendations as discussed under 4.1) - if error WARNING **mandatory field(s) missing** field_name, no further processing possible
 - Check whether content of fields corresponds to the expected format - if error WARNING **format error** and show line + highlight field, present dropdown menu allowing to ignore/consider empty/edit the field;
 -- namePublishedInYear should be of the format 1999a, i.e. 4 digits and optionally one latin character [a-z]. The 4 digits should be >1730 and <current year + 1. 
@@ -129,8 +138,7 @@ Load data in flat taxon, speciesProfile, Reference and Distribution table in sta
 -- The fields isMarine, isFreshwater, isTerrestrial, isBrackish and  isExtinct, isPreferredName should contain boolean values or values that can be translated to booleans 0/1, t/f, TRUE/FALSE, y/n
 -- language should correspond to the ISO 639-1 language code and countryCode should be 2-3 characters (ISO3166 alpha 2 (3 is permissable) country codes)
 -- startDayOfYear and endDayOfYear should be between 1 and 365
--- Eliminate characters ‘\n’ ‘\t’ ‘\u00A0’ and multiple blanks
-**check for others currently in place with Michel - e.g. invalid characters?**
+
 - Checking for unique taxonIDs in taxon table - if error WARNING **non unique IDs**, show lines/list IDs, offer possibility to ignore a line or abort the import process
 - Check whether acceptedNameUsageID and parentNameUsageID refer to taxonIDs present in taxon table - if error WARNING **core IDs missing from taxon table**, show lines/list IDs, offer possibility to ignore a line or abort the import process
 - Checking whether taxonIDs/coreIDs in extension tables correspond to taxonIDs in taxon table - if error: as above
@@ -148,13 +156,14 @@ In case of errors, the operator should be presented with the options to ignore (
 
 - Check whether records with the same provider taxonID (and resourceID) in the species and synonyms table have the same “scientificName, acceptedNameUsageID, parentNameUsageID, acceptedNameUsage, originalNameUsage, parentNameUsage, namePublishedIn, namePublishedInYear, kingdom, phylum, class, order, family, genus, subgenus, specificEpithet, infraspecificEpithet, taxonRank, scientificNameAuthorship”
 
-- Check whether the “scientificName” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table
-- Check whether the combination/concatenated names of the “genus” “specificEpithet” and “infraspecificEpithet” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table
+- If the taxonID is new, check whether the “scientificName” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.
+- If the scientificName is not detected, check whether the combination/concatenated names of the “genus” “specificEpithet” and “infraspecificEpithet” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.
+- If the taxon/scientificName is not detected using exact matching during the 2 previous steps, repeat with phonetic matching.
 
 - Check whether scientificNames with taxonRank =< family are new or are updated (for a new resource this should be the case, but during an update, the operator would be interested to know what’s new and what was already present in the database).
 
-- Check whether scientificNames with taxonRank > family need to be added or are already present in the taxon table (check for conflicts) - if error WARNING **conflicting higher taxonomy**, show conflicting levels + names, provide options: ignore (keep original higher taxonomy), override (adopt new higher taxonomy) and edit and override (edit and adopt new higher taxonomy) 
-**Discuss possible mechanism for adding higher taxonomy to taxa table with Michel/Sylvain: manual entry or mechanism to update this part using Catalogue of Life web services?**
+- Check whether scientificNames with taxonRank > family need to be added or are already present in the taxon table (check for conflicts) - if error WARNING **conflicting higher taxonomy**, show conflicting levels + names, provide options: ignore (keep original higher taxonomy), override (adopt new higher taxonomy) and edit and override (edit and adopt new higher taxonomy).
+Currently the higher taxonomy is copied from MySQL database tables on the [annual release of the Catalogue of Life](http://www.catalogueoflife.org/annual-checklist/2015/) DVD. A more sustainable solution for this issue, using the Catalogue of Life web services should be investigated.
 
 See example mock-up [./UI-screenshots-new/5FADA-import_tool-mockup-validation_import.jpg](./UI-screenshots-new/5FADA-import_tool-mockup-validation_import.jpg).
 
@@ -173,20 +182,19 @@ Excel-data are provided in an [excel-template](./excel-templates), for which the
 - checking column mapping (see 5.4)
 - data load (see 5.5)
 - validation (see 5.6)
-— option to ignore errors
-— option to ignore specific lines (with errors)
-- import data (see 5.7)
+- inject data (see 5.7)
 
 #### Processing shared with DwC-A processing (see section 6)
-- (re)linking to ‘biofresh key’ tables and re-generation of genus-to-families table
+- (re)linking to ‘biofresh key’ tables and re-generation of genus-to-families table (but ideally part of the data injection)
 - propagation of changes to BioFresh species register
+- synchronisation of staging and production database
 
 ### 5.3 Creating resource and entering metadata
 _See the UI-screenshots folder files 5 and 6 for UI-mockups_
-During the creation of an Excel resource, the operator can create a resource for an organism group present in the groups table (cfr. [http://fada.biodiversity.be/group/list?current_page=groups](http://fada.biodiversity.be/group/list?current_page=groups)). 
+During the creation of an Excel resource, the operator can create a resource for an organism group present in the groups table (cfr. [http://fada.biodiversity.be/group/list?current_page=groups](http://fada.biodiversity.be/group/list?current_page=groups)) or create a new (sub)group as detailed for DwC-A resources under 4.3. 
 In case of an existing group for which information is currently available, the operator will be presented with a warning to highlight the fact that this resource already exists. Further processing will not create a new resource, but continue with the review of metadata and upload of an Excel file using the existing info on the resource (also allowing it to be updated). 
 For a group present in the list, metadata present in the group-table will be included in the dialog and can be reviewed and completed at this stage. As the Excel-file does not contain checklist metadata, these fields will be empty and need to be filled for a new resource. With the exception of the field “co-editors”, this information is mandatory.
-We propose to include file upload as part of resource creation. In case of file upload errors, the application should offer a retry option before closing the resource creation window and process.
+We propose to include file upload (from the operator’s computer) as part of resource creation. In case of file upload errors, the application should offer a retry option before closing the resource creation window and process.
 
 ### 5.4 Checking column mapping
 The use of Excel files makes it impossible to be certain of the structure of the files that are sent to us. Contributors can make errors in data structure, field positions, start of data in excel sheets, etc. It is therefore necessary for the operator to make sure that the files comply with one of the two templates that have been agreed on. Essentially this is a check of columns and data position. The easiest solution seems a quick visual checking mechanism to validate the field mapping. This is illustrated in [./UI-screenshots/7FADA-import_tool-mockup-column_mapping.png](./UI-screenshots/7FADA-import_tool-mockup-column_mapping.png).
@@ -199,13 +207,12 @@ The upload process looks for three sheets of data are identified based on their 
 ### 5.6 Validation
 #### Data in staging tables
 - For data entered in the Excel template, we do not use the notion of “mandatory fields”. Nevertheless, it would be useful to flag whether author and year are empty on specific lines. This could be flagged as **recommended data missing**: ‘year’/‘author’ not provided for line xx.
-- While the data are rather different in terms of organisation, validation for **format errors** is largely same as 4.5. In addition to the conditions described earlier there’s a need to;
--- ignore empty lines
--- ignore duplicate lines (only the first element to be kept)
--- check whether distribution data are in a format that can be interpreted as absent/present; a/p, 0/1, ‘’/x
+- While the data are rather different in terms of organisation, validation for **format errors** the corresponding fields is the same as 4.5.
 - If present in the “References” the presence of the Refkey in the “Taxonomy” sheet has to be checked.
 - As data in Excel format does not come with “Core IDs”, the appearance of the names from the “Faunistic” sheet has to be checked.
-- As in 4.5, there’s a need to check the **line consistency** and wether data for **higher taxonomy is missing**. Particular for the Excel templates is that synonyms are not declared in the same format as the accepted species, but are present in dedicated columns. To be validly declared, the accepted species to which the synonym refers has to be declared on a separate line (similar to higher taxonomy levels). However, as this is a easily overlooked by the editors, I propose to implement the option to **declare species based on information on line** as ….
+- As in 4.5, there’s a need to check the **line consistency** and wether data for **higher taxonomy is missing**. 
+-- Particular for the Excel templates is that synonyms are not declared in the same format as the accepted species, but are present in dedicated columns. To be validly declared, the accepted species to which the synonym refers has to be declared on a separate line (similar to higher taxonomy levels). However, as this is a easily overlooked by the editors, I propose to implement the option to **declare species based on information on line xx** as default option.
+-- Another line consistency check particular for data in the Excel-format is checking whether the “original_genus” is provided when the parentheses flag is set to “yes” and/or if “declension_species” is given. 
 
 #### Imported data compared to data in the database tables
 The validation in comparison to data already in the database is also similar to 4.5, with the exception that it cannot be done based on IDs, and can exclusively be performed through name matching.
@@ -215,8 +222,7 @@ As 4.6.
 
 ## 6. Joint components
 ### 6.1 Resource metadata entry and edit module
-Similar to metadata inspector/editor under 4.3 but including all fields from the dataset table. E.g. also abstract/description.
-**add list of all fields , see also/sync with 2.3**
+Similar to metadata inspector/editor under 4.3 but including all fields from the dataset table (e.g. abstract/description) and the new ones described under 2.3.
 
 ### 6.2 Synchronise data with BioFresh species register
 As a “final calculation” function, there is a need for synchronising the data imported into the FADA database/schema with the BioFresh species register table. In addition to the requirements needed for updating the biofresh_key tables, this also requires an overview of the updated “original combinations”. In contrast to the species and synonyms, which are stored in a specific table, there is no separate table for these “original combinations”. A list has to be constructed by combining the information from the following fields; original_genus, declension_species or species (if the former is empty), year and author.
@@ -226,4 +232,4 @@ As mentioned under 2.4, for new species names added to the FADA database, their 
 This will likely require an interface for validating the changes; (a) accept/ignore/link to existing for new entries, (b) check exact matches and accept to update “name source” to FADA, and (c) check phonetic matches and update name from FADA/add FADA name and keep name from register as synonym.
 
 ### 6.3 Synchronise the staging database with the production database
-Need for overall solution for DPIT and FADA-import tool. Is PostgreSQL replication an option/is the synchronisation/replication triggerable? **To be discussed**
+In parallel to the developments of the FADA import tools, we will work out a solution to improve the synchronisation/replication of the staging database (for both the DPIT and FADA import tool) with the production database. If successful, we will provide the code to trigger the synchronisation for use with the “sync prod DB” button in the general interface.
