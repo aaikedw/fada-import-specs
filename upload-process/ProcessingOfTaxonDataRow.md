@@ -21,9 +21,9 @@ Calculate what parentheses should be.
 Compare with actual values. Issue warning if something looks wrong. 
 Set value if clear but not provided by expert.
 
-Check name patterns for the case of accepted name elements.
-Check name patterns for synonym element
-Check author field
+Check name patterns for the case of accepted name elements.<br/>
+Check name patterns for synonym element<br/>
+Check author field<br/>
 Check publication year field
 
 ##Error messages
