@@ -11,6 +11,7 @@ Check if record content is consistent with rank
 - if "subtribe", "tribe" must be present
 - if "subspecies", "genus" and "species" must be present
 - "family" must always be present (So checking in case of subfamily is not necessary)
+- from "genus" onwards all superior levels may be blank EXCEPT family
 
 Fill parenthese automatically to "N" if the row describes something not in ranks [GENUS, SUBGENUS, SPECIESGROUP, SPECIES, SUBSPECIES]
 
