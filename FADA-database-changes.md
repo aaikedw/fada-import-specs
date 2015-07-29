@@ -1,6 +1,10 @@
 # FADA schema changes
 
 ## Changes in FADA tables
+### Changes which we wanted to add for some species groups.
+The integration of Simuliidae species and possibly other species group requires to add another taxonomic level we will call "species group".
+This new level is situated between a subgenus and a species.
+The introduction of this level required a new record in the rank table but also a reorganisation of how a species name is calculated.
 ### Changes due to our exchanges with WORMS
 In order to implement our goals about the software assisted updating of the FADA backbone we are going to bring some changes to the database FADA schema of the BioFresh database.
 
