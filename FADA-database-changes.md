@@ -4,7 +4,13 @@
 ### Changes which we wanted to add for some species groups.
 The integration of Simuliidae species and possibly other species group requires to add another taxonomic level we will call "species group".
 This new level is situated between a subgenus and a species.
-The introduction of this level required a new record in the rank table but also a reorganisation of how a species name is calculated.
+The introduction of this level required a 
+new record in table fada.rank 
+a new field in table fada.species
+a change in how a species name is calculated.
+
+It remains to be seen what changes could be necessary to integrate this new level in our observation data import tool (DPIT) and how we will link names with speciesgroups from the registery to the taxonomic part.
+
 ### Changes due to our exchanges with WORMS
 In order to implement our goals about the software assisted updating of the FADA backbone we are going to bring some changes to the database FADA schema of the BioFresh database.
 
@@ -51,6 +57,3 @@ If the reverse capability is wished (consult taxonomic backbone only for specifi
 register.biofreshspeciesregistry table to allow a choice beforehand.
 
 Another foreseable sideeffect is the change in the structure of our downloadable data. The information donwloadable on a species should be adpated to contain the same type of data that will be used in our echanges with WORMS.
-
-
-
