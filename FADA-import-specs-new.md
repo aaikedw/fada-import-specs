@@ -1,7 +1,7 @@
 # Specifications FADA import tool
-_Version 10/04/2015_ 
+_Version 10/08/2015 - Draft V1.1_ 
 _Authors: Aaike De Wever, Michel Kapel_
-This document is used for launching a call for offers for developing the FADA import tool. This document is intended as a guidance for constructing the web application, but as it consists of a complex database and the reconciliation of the needs from ‘biologist’ users and the technical needs and possibilities, it is likely that specific requirements will have to be clarified and refined along the way.
+This document is used for launching a call for offers for developing the FADA import tool. This document is intended as a guidance for constructing the web application, but as it consists of a complex database and the reconciliation of the needs from ‘biologist’ users and the technical needs and possibilities, it is likely that specific requirements will have to be clarified and refined along the way. This version includes changes after the work of this tool was initiated.
 Supporting material for this specification document can be consulted at [https://github.com/aaikedw/fada-import-specs](https://github.com/aaikedw/fada-import-specs).
 
 ## 1. General background information
@@ -21,6 +21,8 @@ The organisation by organism group, corresponds to the initial organisation as w
 For database purposes and/or because no taxonomic editor is found to provide a checklist for the entire group, we may subdivide the task and create a new (sub)group. While taxonomically this represents the creation of a real subgroup, we do not aim to introduce any hierarchical structure at the level of the groups themselves, as these remain “operational units” in the first place.
 
 In terms of size, the checklist for the different groups vary from not even 100 species names to around 16.000 names for Vertebrates-Fish. Unless, at some stage we will further extend the scope at the database to non-animal freshwater groups (other than the [“Macrophytes”](http://en.wikipedia.org/wiki/Macrophyte) group, which is currently included), which is unlikely to happen within the duration of the [AquaRES project](http://odnature.naturalsciences.be/aquares/), the total number of (accepted) species names is unlikely surpass 200.000 and 16.000 for individual groups in the near future. 
+
+Note: As DwC-A files may include non-freshwater species (which have to be filtered out at some stage), the number of records in these files can be higher.
 
 [^1]: The “operational unit” can be referred to as “Group”, “Data source” or “Resource”. In this document the term “group” is used to stress the link with taxonomic unit, whereas “resource” is used when discussing the digital representation of such a group (e.g. as an ‘import unit’ and its associated file).
 
@@ -46,6 +48,9 @@ While the organisation of the database may be improved in certain areas, we shou
 
 This means that potential improvements are (in addition to the modifications mentioned below) basically related to the organisation of the _biofresh_key_-tables and the flat taxon tables. The “biofresh keys” could be integrated in the taxon, species and synonym table eliminating the need for specific tables (this would require a small change in the portal app and export scripts). Instead of having a combination of the the _genus_to_family_ table and the _fst_for_genus_ and _fst_for_tribe_ views, we could opt for extending the _taxons_ table with a flat version of the complete taxonomic hierarchy (thus adding the fields: kingdom, class, order, family,… genus, specificEpithet, infraspecificEpithet).
 
+As will be elaborated in the [./FADA-database-changes.md](./FADA-database-changes.md) document, we currently (10/08/2015) envisage 2 main types of database changes: 1) changes directly linked to the FADA import tool and 2) changes linked to improving the overall database structure and performance. The organisation of the _biofresh_key_-tables and organisation of the taxon information is considered under (2) which should be dealt with under a separate contract.
+
+Note: On 30/07/2015 Sylvain Renaudier notified me that the keys we are using to link the tables are currently not actual “foreign keys”, which means they are not indexed. This issue can be addressed by adding constraints for the ID fields. Michel will need to test whether this has an impact on the FADA-app, if not, this change could still be applied independent of (2).
 
 #### Planned and needed changes in terms of database structure 
 In addition to expected changes due to the implementation of a FADA-import tool with its own progress and log database tables, we foresee the need for specific changes based on the required fields to implement the data exchange using the DwC-A exchange format (see 4.1) and certain requests from our editors (categories for aquatic/water dependent species). These changes include the need for the following fields/tables;
@@ -128,6 +133,9 @@ _Note: while the validation will act on different tables and fields, and might b
 -- Check for accidental use of “o” instead of “0” and vice versa. E.g. use of “o” in year (199o), use of “0” in latin-only fields (spin0sus). Replace where detected.
 
 - Check whether mandatory fields are present (see overview of DwC-field recommendations as discussed under 4.1) - if error WARNING **mandatory field(s) missing** field_name, no further processing possible
+
+Note: Originally the Excel overview was constructed more from the perspective of the data provider. During a discussion with Sylvain Renaudier on 6/8/15 we realised that it would not be usefull to generate warnings for every single missing field which is labeled as mandatory. This designation as “Mandatory” was therefore reviewed and updated in the Excel-file [./DwC-file_processing/DwC-AquaRES_field_selection-with_FADA_mapping-v1.1.xlsx](./DwC-file_processing/DwC-AquaRES_field_selection-with_FADA_mapping-v1.1.xlsx).
+
 - Check whether content of fields corresponds to the expected format - if error WARNING **format error** and show line + highlight field, present dropdown menu allowing to ignore/consider empty/edit the field;
 -- namePublishedInYear should be of the format 1999a, i.e. 4 digits and optionally one latin character [a-z]. The 4 digits should be >1730 and <current year + 1. 
 -- The fields kingdom, family, genus, specificEpithet, infraspecificEpithet should only contain latin characters [a-z], accented characters are not permitted
@@ -141,10 +149,17 @@ _Note: while the validation will act on different tables and fields, and might b
 
 - Checking for unique taxonIDs in taxon table - if error WARNING **non unique IDs**, show lines/list IDs, offer possibility to ignore a line or abort the import process
 - Check whether acceptedNameUsageID and parentNameUsageID refer to taxonIDs present in taxon table - if error WARNING **core IDs missing from taxon table**, show lines/list IDs, offer possibility to ignore a line or abort the import process
+
+Note: The GBIF library for processing DwC-A automatically ignores the entries in the extension files that do not match the core IDs. As this procedure also ensures the relational integrity and it would require (potentially time consuming) code forking to perform this check, we decided to skip it on 6/8/15.
+
 - Checking whether taxonIDs/coreIDs in extension tables correspond to taxonIDs in taxon table - if error: as above
 - Checking the consistency of the row, e.g.: if the “specificEpithet” field is provided, the “genus” field cannot be empty. If error WARNING **line consistency problem for** ‘taxonRank’ missing ‘higherTaxonRank’: show line and offer possibility to ignore line or edit line
 - Check whether data for higher taxonomic levels are correctly declared; genus requires family, species requires genus, subspecies requires specificEpithet. - if error WARNING **higher taxonomy missing in input file for** taxonRank:scientificName missing taxonRank:scientificName, offer possibility to ignore or edit line
 See example mock-up [./UI-screenshots-new/4FADA-import_tool-mockup-validation_format.jpg](./UI-screenshots-new/4FADA-import_tool-mockup-validation_format.jpg).
+
+During discussion with Sylvain on 6/8/15 we realised that the combination of record (ignore line) and field (empty, edit) level actions as envisaged in the mock-ups (Fig. 7) is not ideal and could result in potential conflicts (e.g. ignore line + edit field action for same line). As a solution, we agreed to split this up as follows; 1) report the lines with errors and the type(s) of errors per line, and offer the possibility to ignore the lines, process the line “as is” or act on the individual fields affected, and 2) provide the option to act on specific fields containing errors, providing the options ignore error, empty field and edit field.
+Following this logic, the processing of the declaration errors and import conflicts also needs to be re-considered. The “line consistency errors” could probably be reported along with the other record level error reporting (as described in preceding sentences), while the hierarchical consistency errors require a separate interface to add the missing info (cfr. the “create from” and “create new” option in the middle pane of Fig. 7). The form for entering this info does not need to cover all DarwinCore fields, but requires most of the info from the taxon sheet to be entered/generated; _Family, Subfamily, Tribe, Subtribe, Genus, Subgenus, Species group, Species, Subspecies_ (depending on the taxonrank for which there is a hierarchical consistency error; i.e. if error is for undeclared Genus, only the rank Genus and up need to be completed), _Author(s), Date, Original genus, Original species name, Parentheses_ and _ref key_ have to be included in the form.
+It was agreed that the implementation of the “validation report review” which is presented in 5 tab sheets  in Fig. 7 will be split up in 3; 1) Hierarchical consistency errors, 2) Record and field level errors (itself split up in 2 steps as described earlier)  and 3) import status errors, each with its specific interface and options for dealing with the warnings/errors.
 
 #### Imported data compared to data in the database tables
 Based on the groupID (entirely new group?) and (provider) taxonID/coreID > Check which data are already present in the database and compare content of fields if the provider taxonID/coreID is already present. Records can either be;
@@ -194,10 +209,17 @@ _See the UI-screenshots folder files 5 and 6 for UI-mockups_
 During the creation of an Excel resource, the operator can create a resource for an organism group present in the groups table (cfr. [http://fada.biodiversity.be/group/list?current_page=groups](http://fada.biodiversity.be/group/list?current_page=groups)) or create a new (sub)group as detailed for DwC-A resources under 4.3. 
 In case of an existing group for which information is currently available, the operator will be presented with a warning to highlight the fact that this resource already exists. Further processing will not create a new resource, but continue with the review of metadata and upload of an Excel file using the existing info on the resource (also allowing it to be updated). 
 For a group present in the list, metadata present in the group-table will be included in the dialog and can be reviewed and completed at this stage. As the Excel-file does not contain checklist metadata, these fields will be empty and need to be filled for a new resource. With the exception of the field “co-editors”, this information is mandatory.
+
+Note: The information on the Principal editor is stored in the users-table rather than in the groups-table. From the perspective of the import app, this means that, unless the name entered in this field exactly matches an entry in the users-table, a new user will be created. 
+
 We propose to include file upload (from the operator’s computer) as part of resource creation. In case of file upload errors, the application should offer a retry option before closing the resource creation window and process.
+
+Note: [Check again with Sylvain] - From a practical perspective I understood that we were going to split this in two stages again, but I am not sure anymore which ones. I have resource creation (only selecting the species group from a dropdown) as a separate step from data download and metadata creation/upload, but am not sure… Actually this roughly corresponds to Fig. 9, where the upper left dialog would represent a separate processing step.
 
 ### 5.4 Checking column mapping
 The use of Excel files makes it impossible to be certain of the structure of the files that are sent to us. Contributors can make errors in data structure, field positions, start of data in excel sheets, etc. It is therefore necessary for the operator to make sure that the files comply with one of the two templates that have been agreed on. Essentially this is a check of columns and data position. The easiest solution seems a quick visual checking mechanism to validate the field mapping. This is illustrated in [./UI-screenshots/7FADA-import_tool-mockup-column_mapping.png](./UI-screenshots/7FADA-import_tool-mockup-column_mapping.png).
+
+Note: Fig. 11 shows a multi row comparison for the visual column mapping tool. For practical reasons it was agreed (30/7/15) with Sylvain that only looking at row 3, which contains the column headers, would be sufficient. The only issue with that is that the label for RefKey is on row 2 and row 3 for this column is empty. This will be corrected in the new 2.1 template version and earlier versions of the template that are sent out before finalising this version. Nevertheless, during the check this header field is potentially empty (and should not be considered as an error).   
 
 ### 5.5 Data upload
 The upload step is the reading data from Excel files and storing it in tables in a staging area.
