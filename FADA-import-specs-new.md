@@ -1,5 +1,5 @@
 # Specifications FADA import tool
-_Version 10/08/2015 - Draft V1.1_ 
+_Version 14/08/2015 - V1.1 Draft 2 – including answers to questions Sylvain_ 
 _Authors: Aaike De Wever, Michel Kapel_
 This document is used for launching a call for offers for developing the FADA import tool. This document is intended as a guidance for constructing the web application, but as it consists of a complex database and the reconciliation of the needs from ‘biologist’ users and the technical needs and possibilities, it is likely that specific requirements will have to be clarified and refined along the way. This version includes changes after the work of this tool was initiated.
 Supporting material for this specification document can be consulted at [https://github.com/aaikedw/fada-import-specs](https://github.com/aaikedw/fada-import-specs).
@@ -153,24 +153,43 @@ Note: Originally the Excel overview was constructed more from the perspective of
 Note: The GBIF library for processing DwC-A automatically ignores the entries in the extension files that do not match the core IDs. As this procedure also ensures the relational integrity and it would require (potentially time consuming) code forking to perform this check, we decided to skip it on 6/8/15.
 
 - Checking whether taxonIDs/coreIDs in extension tables correspond to taxonIDs in taxon table - if error: as above
-- Checking the consistency of the row, e.g.: if the “specificEpithet” field is provided, the “genus” field cannot be empty. If error WARNING **line consistency problem for** ‘taxonRank’ missing ‘higherTaxonRank’: show line and offer possibility to ignore line or edit line
+- Checking the consistency of the row, e.g.: if the “specificEpithet” field is provided, the “genus” field cannot be empty. If error WARNING **line consistency problem for** ‘taxonRank’ missing ‘higherTaxonRank’: show line and offer possibility to ignore line or edit line•. Below is a list of fields that have to be filled for a given taxon rank: 
+-- 	infraspecificEpithet (taxonRank= “subspecies”, “varietas”, “forma”): specificEpithet, genus and family have to be (minimally) provided
+-- 	specificEpithet (taxonRank= “species”): genus and family have to be (minimally) provided
+-- genus (taxonRank= “genus”): family has to be (minimally) provided
 - Check whether data for higher taxonomic levels are correctly declared; genus requires family, species requires genus, subspecies requires specificEpithet. - if error WARNING **higher taxonomy missing in input file for** taxonRank:scientificName missing taxonRank:scientificName, offer possibility to ignore or edit line
-See example mock-up [./UI-screenshots-new/4FADA-import_tool-mockup-validation_format.jpg](./UI-screenshots-new/4FADA-import_tool-mockup-validation_format.jpg).
+See example mock-up [./UI-screenshots-new/4FADA-import_tool-mockup-validation_format.jpg](./UI-screenshots-new/4FADA-import_tool-mockup-validation_format.jpg). The levels that have to be declared are the same as for previous check, although here it concerns the valid declaration of a specific taxonRank at line/record level. For DwC-A files this extends to the higher taxonRanks as follows (although missing content for these levels is not considered critical); 
+-- family: order, class, phylum are expected
+-- order: class, phylum are expected
+-- class: phylum is expected
+Additionally, for data provided using the Excel-template, if applicable, the intermediary taxonRanks (optional ones in square brackets) have to be checked, e.g.;
+-- Subspecies: Species, [Species group], [Subgenus], Genus, [Subtribe], [Tribe], [Subfamily], Family
+-- Species: [Species group], [Subgenus], Genus, [Subtribe], [Tribe], [Subfamily], Family
+-- Species group: [Subgenus], Genus, [Subtribe], [Tribe], [Subfamily], Family
+-- Subgenus: Genus, [Subtribe], [Tribe], [Subfamily], Family
+-- …
 
-During discussion with Sylvain on 6/8/15 we realised that the combination of record (ignore line) and field (empty, edit) level actions as envisaged in the mock-ups (Fig. 7) is not ideal and could result in potential conflicts (e.g. ignore line + edit field action for same line). As a solution, we agreed to split this up as follows; 1) report the lines with errors and the type(s) of errors per line, and offer the possibility to ignore the lines, process the line “as is” or act on the individual fields affected, and 2) provide the option to act on specific fields containing errors, providing the options ignore error, empty field and edit field.
-Following this logic, the processing of the declaration errors and import conflicts also needs to be re-considered. The “line consistency errors” could probably be reported along with the other record level error reporting (as described in preceding sentences), while the hierarchical consistency errors require a separate interface to add the missing info (cfr. the “create from” and “create new” option in the middle pane of Fig. 7). The form for entering this info does not need to cover all DarwinCore fields, but requires most of the info from the taxon sheet to be entered/generated; _Family, Subfamily, Tribe, Subtribe, Genus, Subgenus, Species group, Species, Subspecies_ (depending on the taxonrank for which there is a hierarchical consistency error; i.e. if error is for undeclared Genus, only the rank Genus and up need to be completed), _Author(s), Date, Original genus, Original species name, Parentheses_ and _ref key_ have to be included in the form.
-It was agreed that the implementation of the “validation report review” which is presented in 5 tab sheets  in Fig. 7 will be split up in 3; 1) Hierarchical consistency errors, 2) Record and field level errors (itself split up in 2 steps as described earlier)  and 3) import status errors, each with its specific interface and options for dealing with the warnings/errors.
+During discussion with Sylvain on 6/8/15 we realised that the combination of record (ignore line) and field (empty, edit) level actions as envisaged in the mock-ups (Fig. 7) is not ideal and could result in potential conflicts (e.g. ignore line + edit field action for same line). As a solution, we agreed to split this up as follows; 1) report the lines with errors and the type(s) of errors per line, and offer the possibility to ignore the lines (=delete the content from the import) or act on the line = “process line” (the choice between processing individual errors on the line “as is” or act on the individual fields affected is part of step 2) and 2) provide the option to act on specific fields containing errors, providing the options ignore error, empty field and edit field.
+Following this logic, the processing of the declaration errors and import conflicts also needs to be re-considered. The “line consistency errors” will be reported along with the other record level error reporting (as described in preceding sentences), while the hierarchical consistency errors require a separate interface to add the missing info (cfr. the “create from” and “create new” option in the middle pane of Fig. 7). The form for entering this info does not need to cover all DarwinCore fields, but requires most of the info from the taxon sheet to be entered/generated; _Family, Subfamily, Tribe, Subtribe, Genus, Subgenus, Species group, Species, Subspecies_ (depending on the taxonrank for which there is a hierarchical consistency error; i.e. if error is for undeclared Genus, only the rank Genus and up need to be completed), _Author(s), Date, Original genus, Original species name, Parentheses_ and _ref key_ have to be included in the form.
+It was agreed that the implementation of the “validation report review” which is presented in 5 tab sheets  in Fig. 7 will be split up in 3 stages; 1) Hierarchical consistency errors (only covering the last point under 4.5 Validation), 2) Record and field level errors (itself split up in 2 steps as described earlier)  and 3) import status errors, each with its specific interface and options for dealing with the warnings/errors.
+In summary, the following stages will have the processing options;
+1)	Hierarchical consistency errors: ignore line, create [parent record] from [info in child record], create new [parent record]
+2)	A. Record level evaluation: “Ignore/Delete” OR “Process” (the latter being the default option) B. Field level evaluation: “Ignore error” (= process “as is”), “empty” (this could also be achieved through editing of course, so if this would programmatically be easier, this option can be dropped) OR “edit”
+Note: Once the report is validated, these changes will be directly be propagated at DB level on candidate DwC-A/Excel import records (delete, update…).
+@Sylvain: Please let me know in case you were expecting more details “in terms of UI interaction” and “scenarios”.
 
 #### Imported data compared to data in the database tables
-Based on the groupID (entirely new group?) and (provider) taxonID/coreID > Check which data are already present in the database and compare content of fields if the provider taxonID/coreID is already present. Records can either be;
-__NEW__: Alert the operator that this is new (unless it is an entirely new group).
+Based on the groupID (entirely new group?) and (provider) taxonID/coreID > Check which data are already present in the database and compare content of fields if the provider taxonID/coreID is already present. Note that providerTaxonID is a new field that needs to be added to the database. [Aaike: note-to-self: check if sufficiently detailed elsewhere and insert reference here!]
+Records can either be;
+__NEW__: Alert the operator that this is new (unless it is an entirely new group - a group is considered new if no species data is associated to it. At the level of the import app, this would mean that there is no resource, either DwC-A or Excel import associated to it).
 __UPDATED__: Associated information added (e.g. distribution and speciesProfile data previously not available). Alert operator, default option “Apply update”, option for operator to “ignore update” .
 __POTENTIAL CONFLICT__: 
 This type of error mainly applies for any name related fields including taxonID, scientificName, genus, specificEpithet, etc. covered by the next checks.
 In case of errors, the operator should be presented with the options to ignore (keep former data), override (adopt new data) or edit and override (adopting newly entered data).
 
-- Check whether records with the same provider taxonID (and resourceID) in the species and synonyms table have the same “scientificName, acceptedNameUsageID, parentNameUsageID, acceptedNameUsage, originalNameUsage, parentNameUsage, namePublishedIn, namePublishedInYear, kingdom, phylum, class, order, family, genus, subgenus, specificEpithet, infraspecificEpithet, taxonRank, scientificNameAuthorship”
-
+- Check whether records with the same provider taxonID (and resourceID or groupID) in the species and synonyms table have the same “scientificName, acceptedNameUsageID, parentNameUsageID, acceptedNameUsage, originalNameUsage, parentNameUsage, namePublishedIn, namePublishedInYear, kingdom, phylum, class, order, family, genus, subgenus, specificEpithet, infraspecificEpithet, taxonRank, scientificNameAuthorship”
+Note: the resourceID is linked to the import application tables and is expected to be referenced in the groups table as a foreign key. The groups table has to be updated accordingly.
+[Aaike: note-to-self: Construct overview table with DwC-terms, Excel-column names and field names in fada.species, fada.synonyms etc.]
 - If the taxonID is new, check whether the “scientificName” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.
 - If the scientificName is not detected, check whether the combination/concatenated names of the “genus” “specificEpithet” and “infraspecificEpithet” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.
 - If the taxon/scientificName is not detected using exact matching during the 2 previous steps, repeat with phonetic matching.
@@ -184,6 +203,12 @@ See example mock-up [./UI-screenshots-new/5FADA-import_tool-mockup-validation_im
 
 ### 4.6 Data injection
 Inject data in database tables and update biofresh_key tables. Updating the biofresh_key table requires to build an overview of the updated names (e.g spelling corrections), which need to keep their original biofresh_key, the new species, for which a new id is generated, and the deleted ones, for which the logical delete flag needs to be set. See more background details on the biofresh_key tables under 2.4.
+
+[Sylvain-10/8/15] More details on how to:
+-inject in species/synonyms/taxons tables 
+-sync biofresh_key table/register 
+would be great. These are complicated tasks with multiple possible scenarii based on the record import status and the actions chosen during the validation steps., the best could be to have pseudo algorithms acting on a single core record (dwca) or single excel taxon sheet line. 
+[Aaike-14/08/15] Requires further discussion with Michel. My understanding that the tables need to be filled in the order taxons > species > synonyms, to allow the latter tables to reference the former.
 
 ## 5. Excel template processing
 While scripts for importing data are currently available for importing Excel data, it would probably be more efficient to re-write them. Nevertheless, these scripts could provide inspiration for how to tackle specific issues. More details can be found in the “Current workflow: Excel template processing” section of an earlier version of the specifications document [FADA-import-specs.md](./FADA-import-specs.md).
@@ -214,7 +239,7 @@ Note: The information on the Principal editor is stored in the users-table rathe
 
 We propose to include file upload (from the operator’s computer) as part of resource creation. In case of file upload errors, the application should offer a retry option before closing the resource creation window and process.
 
-Note: [Check again with Sylvain] - From a practical perspective I understood that we were going to split this in two stages again, but I am not sure anymore which ones. I have resource creation (only selecting the species group from a dropdown) as a separate step from data download and metadata creation/upload, but am not sure… Actually this roughly corresponds to Fig. 9, where the upper left dialog would represent a separate processing step.
+Note: From a practical perspective we will split this in two stages again: 1) resource creation (only selecting the species group from a dropdown) as a separate step from 2) data download and metadata creation/upload. This roughly corresponds to Fig. 9, where the upper left dialog would represent a separate processing step.
 
 ### 5.4 Checking column mapping
 The use of Excel files makes it impossible to be certain of the structure of the files that are sent to us. Contributors can make errors in data structure, field positions, start of data in excel sheets, etc. It is therefore necessary for the operator to make sure that the files comply with one of the two templates that have been agreed on. Essentially this is a check of columns and data position. The easiest solution seems a quick visual checking mechanism to validate the field mapping. This is illustrated in [./UI-screenshots/7FADA-import_tool-mockup-column_mapping.png](./UI-screenshots/7FADA-import_tool-mockup-column_mapping.png).
@@ -238,6 +263,7 @@ The upload process looks for three sheets of data are identified based on their 
 
 #### Imported data compared to data in the database tables
 The validation in comparison to data already in the database is also similar to 4.5, with the exception that it cannot be done based on IDs, and can exclusively be performed through name matching.
+[Note Aaike: to be double checked with Michel] This name matching is based on a concatenation of Genus, (subgenus), species, subspecies/infraspecificEpithet, author and year. I wonder whether it makes sense to have a 2 level matching, one stricter (all name elements present incl. species group and authorship details) and one less strict (only Genus + species + subspecies/infraspecificEpithet)?
 
 ### 5.7 Import
 As 4.6.
@@ -247,7 +273,12 @@ As 4.6.
 Similar to metadata inspector/editor under 4.3 but including all fields from the dataset table (e.g. abstract/description) and the new ones described under 2.3.
 
 ### 6.2 Synchronise data with BioFresh species register
-As a “final calculation” function, there is a need for synchronising the data imported into the FADA database/schema with the BioFresh species register table. In addition to the requirements needed for updating the biofresh_key tables, this also requires an overview of the updated “original combinations”. In contrast to the species and synonyms, which are stored in a specific table, there is no separate table for these “original combinations”. A list has to be constructed by combining the information from the following fields; original_genus, declension_species or species (if the former is empty), year and author.
+As a “final calculation” function, there is a need for synchronising the data imported into the FADA database/schema with the BioFresh species register table. In addition to the requirements needed for updating the biofresh_key tables, this also requires an overview of the updated “original combinations”*. In contrast to the species and synonyms, which are stored in a specific table, there is no separate table for these “original combinations”. A list has to be constructed by combining the information from the following fields; original_genus, declension_species or species (if the former is empty), year and author.
+
+* Original combinations are “previously accepted species name” which have become “objective synonyms” because the species has been moved to another Genus. In the Halacaridae example file, the species “Halacarellus hyrcanus (Viets 1928)” has as original combination “Caspihalacarus hyrcanus Viets 1928”. For some reason, these names are not stored in the synonym table, but are only referenced through a taxonID in the species table
+ 
+[Sylvain-10/8/15] A pseudo algorithm would be greatly welcome.
+[Note Aaike] to be double checked with Michel
 
 As mentioned under 2.4, for new species names added to the FADA database, their presence in the BioFresh species register needs to be checked (as this register can be populated through other sources) based on the group and species name matching (both exact and phonetic).
 
@@ -255,3 +286,5 @@ This will likely require an interface for validating the changes; (a) accept/ign
 
 ### 6.3 Synchronise the staging database with the production database
 In parallel to the developments of the FADA import tools, we will work out a solution to improve the synchronisation/replication of the staging database (for both the DPIT and FADA import tool) with the production database. If successful, we will provide the code to trigger the synchronisation for use with the “sync prod DB” button in the general interface.
+
+Note: this is not strictly part of the specifications. The production database synchronisation is indeed handled manually, nevertheless we are still looking (internally) for a better staging - sync setup to handle the database at Belspo and Gulledelle, and were wondering if the PostgreSQL replication functionality would be useful…
