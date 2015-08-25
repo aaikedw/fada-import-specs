@@ -210,6 +210,14 @@ Inject data in database tables and update biofresh_key tables. Updating the biof
 would be great. These are complicated tasks with multiple possible scenarii based on the record import status and the actions chosen during the validation steps., the best could be to have pseudo algorithms acting on a single core record (dwca) or single excel taxon sheet line. 
 [Aaike-14/08/15] Requires further discussion with Michel. My understanding that the tables need to be filled in the order taxons > species > synonyms, to allow the latter tables to reference the former.
 
+The taxon table needs to be filled first and it must be filled in a hierachical order.
+That is, you have to start by adding the families and then all declared sub elements down to the genus.
+There is a catch here.
+I am not sure about original genus and declension species. At present we add them first. and then we go on with genus, subgenus, etc but I am not sure if this is an advantage.
+While adding the species and subspecies taxons it is possible to create the species and subspecies records in the species table.
+After this comes a process that deals with the fada.groups_taxons table and that stores the top level elements of a group in the fada.groups_taxons.
+After that come the processing of the synonyms.
+
 ## 5. Excel template processing
 While scripts for importing data are currently available for importing Excel data, it would probably be more efficient to re-write them. Nevertheless, these scripts could provide inspiration for how to tackle specific issues. More details can be found in the “Current workflow: Excel template processing” section of an earlier version of the specifications document [FADA-import-specs.md](./FADA-import-specs.md).
 
@@ -280,6 +288,10 @@ As a “final calculation” function, there is a need for synchronising the dat
 [Sylvain-10/8/15] A pseudo algorithm would be greatly welcome.
 [Note Aaike] to be double checked with Michel
 
+### Evaluation for the sync with register data.
+The data in the register schema (register.biofreshspeciesregistry) cannot be linked to original combinations because they are not stored as concepts in the fada schema. (no special table or view). However we could check that a species has an original combination and create a record in the register table that will linked to it's accepted name record in the register table. 
+So if for an accepted species in the fada species table we find the same species in the register table. If the species found in the fada table has an original combination we try to find it in the register table. If the original combination cannot be found we can create it in the register and link it to the accepted name in the register.
+
 As mentioned under 2.4, for new species names added to the FADA database, their presence in the BioFresh species register needs to be checked (as this register can be populated through other sources) based on the group and species name matching (both exact and phonetic).
 
 This will likely require an interface for validating the changes; (a) accept/ignore/link to existing for new entries, (b) check exact matches and accept to update “name source” to FADA, and (c) check phonetic matches and update name from FADA/add FADA name and keep name from register as synonym.
@@ -288,3 +300,13 @@ This will likely require an interface for validating the changes; (a) accept/ign
 In parallel to the developments of the FADA import tools, we will work out a solution to improve the synchronisation/replication of the staging database (for both the DPIT and FADA import tool) with the production database. If successful, we will provide the code to trigger the synchronisation for use with the “sync prod DB” button in the general interface.
 
 Note: this is not strictly part of the specifications. The production database synchronisation is indeed handled manually, nevertheless we are still looking (internally) for a better staging - sync setup to handle the database at Belspo and Gulledelle, and were wondering if the PostgreSQL replication functionality would be useful…
+
+Actually we should implement our initial agreement with BelSPO
+namely that we should have a 'staging' app using a 'staging' db.
+
+When staging DB is ready for prod then Julien only has to 
+- delete the prod db
+- change the name of the staging DB to prod DB
+- prepare a new staging DB using any of those
+     a) eventually just create a shell empty DB we would do refill part
+     b) make a copy of the prod DB into a new staging DB. This requires more time and this is why a simple renaming is easier for the staging -> production step but we can take more time for creating a staging DB.
