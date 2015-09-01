@@ -1,5 +1,5 @@
 # Specifications FADA import tool
-_Version 14/08/2015 - V1.1 Draft 2 – including answers to questions Sylvain_ 
+_Version 31/08/2015 - V1.1 Draft 3 - Pre-final version_ 
 _Authors: Aaike De Wever, Michel Kapel_
 This document is used for launching a call for offers for developing the FADA import tool. This document is intended as a guidance for constructing the web application, but as it consists of a complex database and the reconciliation of the needs from ‘biologist’ users and the technical needs and possibilities, it is likely that specific requirements will have to be clarified and refined along the way. This version includes changes after the work of this tool was initiated.
 Supporting material for this specification document can be consulted at [https://github.com/aaikedw/fada-import-specs](https://github.com/aaikedw/fada-import-specs).
@@ -95,6 +95,9 @@ These two modules need to be integrated in a joint interface with the following 
 - During the import phase, the user will be presented with a progress bar to indicate which steps have been completed and which tasks are left.
 - The previously developed Data Portal Import Tool (DPIT) uses ExtJS version 3.4, the investment of moving to a more recent version (4.2 or up) should be considered  in relation to the potential for integration with and re-use of code from the DPIT on one hand vs. the future cost of maintenance.
 - General workflow: Similar to the DPIT, the FADA import tool acts on a staging database, which can easily be copied/synced with the production database. If feasible, we would opt to use the same staging database.
+- [Clarification] As mentioned in Fig. 8 _“also show groups that are present in the db but have not previously been created/processed through the web tool”_, it would be nice if a resource (without associated job) could be created in the database, so it shows up in the interface. As all groups currently present in the database were imported from xls files, this is only relevant for this resource type. On 28/8/2015 it was agreed to implement this option unless it would conflict with other requirements of the app, would require too much work or change the current logic of the app.
+- [Clarification] As mentioned in Fig. 4, the “Sync BioFresh register” could be considered as a resource specific function or a global one. During discussion on 28/8/2015, it was agreed that implementing this functionality as part of the resource job was the most logical option.
+- [Clarification/New] While this is implicit in several of the mock-ups (Fig. 6 “re-download”, Fig. 12 “re-upload file” and Fig. 11: “Re-upload file”), this was not clearly mentioned as a functionality in the specifications. On 28/8/2015, we agreed that there is a need for a job wide abort option, which allows the operator to re-download/re-upload a (corrected) file. 
 
 See the UI-screenshots-new folder for UI-mockups. The mock-up [./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg](./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg) shows the organisation of the two modules in tabs.
 
@@ -171,7 +174,7 @@ Additionally, for data provided using the Excel-template, if applicable, the int
 
 During discussion with Sylvain on 6/8/15 we realised that the combination of record (ignore line) and field (empty, edit) level actions as envisaged in the mock-ups (Fig. 7) is not ideal and could result in potential conflicts (e.g. ignore line + edit field action for same line). As a solution, we agreed to split this up as follows; 1) report the lines with errors and the type(s) of errors per line, and offer the possibility to ignore the lines (=delete the content from the import) or act on the line = “process line” (the choice between processing individual errors on the line “as is” or act on the individual fields affected is part of step 2) and 2) provide the option to act on specific fields containing errors, providing the options ignore error, empty field and edit field.
 Following this logic, the processing of the declaration errors and import conflicts also needs to be re-considered. The “line consistency errors” will be reported along with the other record level error reporting (as described in preceding sentences), while the hierarchical consistency errors require a separate interface to add the missing info (cfr. the “create from” and “create new” option in the middle pane of Fig. 7). The form for entering this info does not need to cover all DarwinCore fields, but requires most of the info from the taxon sheet to be entered/generated; _Family, Subfamily, Tribe, Subtribe, Genus, Subgenus, Species group, Species, Subspecies_ (depending on the taxonrank for which there is a hierarchical consistency error; i.e. if error is for undeclared Genus, only the rank Genus and up need to be completed), _Author(s), Date, Original genus, Original species name, Parentheses_ and _ref key_ have to be included in the form.
-It was agreed that the implementation of the “validation report review” which is presented in 5 tab sheets  in Fig. 7 will be split up in 3 stages; 1) Hierarchical consistency errors (only covering the last point under 4.5 Validation), 2) Record and field level errors (itself split up in 2 steps as described earlier)  and 3) import status errors, each with its specific interface and options for dealing with the warnings/errors.
+It was agreed that the implementation of the “validation report review” which is presented in 5 tab sheets  in Fig. 7 will be split up in 3 stages; 1) Hierarchical consistency errors (only covering the last point under 4.5 Validation), 2) Record and field level errors (itself split up in 2 steps as described earlier)  and 3) import status errors or “import preview”, each with its specific interface and options for dealing with the warnings/errors.
 In summary, the following stages will have the processing options;
 1)	Hierarchical consistency errors: ignore line, create [parent record] from [info in child record], create new [parent record]
 2)	A. Record level evaluation: “Ignore/Delete” OR “Process” (the latter being the default option) B. Field level evaluation: “Ignore error” (= process “as is”), “empty” (this could also be achieved through editing of course, so if this would programmatically be easier, this option can be dropped) OR “edit”
@@ -179,7 +182,8 @@ Note: Once the report is validated, these changes will be directly be propagated
 @Sylvain: Please let me know in case you were expecting more details “in terms of UI interaction” and “scenarios”.
 
 #### Imported data compared to data in the database tables
-Based on the groupID (entirely new group?) and (provider) taxonID/coreID > Check which data are already present in the database and compare content of fields if the provider taxonID/coreID is already present. Note that providerTaxonID is a new field that needs to be added to the database. [Aaike: note-to-self: check if sufficiently detailed elsewhere and insert reference here!]
+Based on the groupID (entirely new group?) and (provider) taxonID/coreID > Check which data are already present in the database and compare content of fields if the provider taxonID/coreID is already present. Note that providerTaxonID is a new field that needs to be added to the database. As mentioned above this comparison is now part of a separate validation step, the “import preview”.
+
 Records can either be;
 __NEW__: Alert the operator that this is new (unless it is an entirely new group - a group is considered new if no species data is associated to it. At the level of the import app, this would mean that there is no resource, either DwC-A or Excel import associated to it).
 __UPDATED__: Associated information added (e.g. distribution and speciesProfile data previously not available). Alert operator, default option “Apply update”, option for operator to “ignore update” .
@@ -189,7 +193,7 @@ In case of errors, the operator should be presented with the options to ignore (
 
 - Check whether records with the same provider taxonID (and resourceID or groupID) in the species and synonyms table have the same “scientificName, acceptedNameUsageID, parentNameUsageID, acceptedNameUsage, originalNameUsage, parentNameUsage, namePublishedIn, namePublishedInYear, kingdom, phylum, class, order, family, genus, subgenus, specificEpithet, infraspecificEpithet, taxonRank, scientificNameAuthorship”
 Note: the resourceID is linked to the import application tables and is expected to be referenced in the groups table as a foreign key. The groups table has to be updated accordingly.
-[Aaike: note-to-self: Construct overview table with DwC-terms, Excel-column names and field names in fada.species, fada.synonyms etc.]
+Note: The file [./database-info/Field_mapping.xlsx](./database-info/Field_mapping.xlsx) provides an overview table with the field mapping.
 - If the taxonID is new, check whether the “scientificName” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.
 - If the scientificName is not detected, check whether the combination/concatenated names of the “genus” “specificEpithet” and “infraspecificEpithet” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.
 - If the taxon/scientificName is not detected using exact matching during the 2 previous steps, repeat with phonetic matching.
@@ -204,19 +208,10 @@ See example mock-up [./UI-screenshots-new/5FADA-import_tool-mockup-validation_im
 ### 4.6 Data injection
 Inject data in database tables and update biofresh_key tables. Updating the biofresh_key table requires to build an overview of the updated names (e.g spelling corrections), which need to keep their original biofresh_key, the new species, for which a new id is generated, and the deleted ones, for which the logical delete flag needs to be set. See more background details on the biofresh_key tables under 2.4.
 
-[Sylvain-10/8/15] More details on how to:
--inject in species/synonyms/taxons tables 
--sync biofresh_key table/register 
-would be great. These are complicated tasks with multiple possible scenarii based on the record import status and the actions chosen during the validation steps., the best could be to have pseudo algorithms acting on a single core record (dwca) or single excel taxon sheet line. 
-[Aaike-14/08/15] Requires further discussion with Michel. My understanding that the tables need to be filled in the order taxons > species > synonyms, to allow the latter tables to reference the former.
-
-The taxon table needs to be filled first and it must be filled in a hierachical order.
-That is, you have to start by adding the families and then all declared sub elements down to the genus.
-There is a catch here.
-I am not sure about original genus and declension species. At present we add them first. and then we go on with genus, subgenus, etc but I am not sure if this is an advantage.
-While adding the species and subspecies taxons it is possible to create the species and subspecies records in the species table.
-After this comes a process that deals with the fada.groups_taxons table and that stores the top level elements of a group in the fada.groups_taxons.
-After that come the processing of the synonyms.
+The tables need to be filled in the order taxons > species > synonyms, to allow the latter tables to reference the former. The taxon table itself also needs to be filled in a hierarchical order, so lower taxonomic levels can reference the higher ones. More specifically, families are added first, followed by all declared sub elements down to the genus. Currently, the _Original genus_ and _Declension species_ are added to the taxon table before adding the (accepted) _genus_ (and any lower levels), but as these entries are not (necessarily) linked to a parent, this order is probably less important.
+While adding the species and subspecies taxons table, it is possible to create the species and subspecies records in the species table in parallel.
+Once all taxon elements and species are created, we currently launch the process to link groups to a specific taxon level. This is done by identifying the highest taxon rank which is unique to the group. This information is important for the FADA app, to identify the highest taxon level to be shown when browsing the group.
+Finally, the synonyms are processed and stored in the synonyms table.
 
 ## 5. Excel template processing
 While scripts for importing data are currently available for importing Excel data, it would probably be more efficient to re-write them. Nevertheless, these scripts could provide inspiration for how to tackle specific issues. More details can be found in the “Current workflow: Excel template processing” section of an earlier version of the specifications document [FADA-import-specs.md](./FADA-import-specs.md).
@@ -265,7 +260,7 @@ The upload process looks for three sheets of data are identified based on their 
 - While the data are rather different in terms of organisation, validation for **format errors** the corresponding fields is the same as 4.5.
 - If present in the “References” the presence of the Refkey in the “Taxonomy” sheet has to be checked.
 - As data in Excel format does not come with “Core IDs”, the appearance of the names from the “Faunistic” sheet has to be checked.
-- As in 4.5, there’s a need to check the **line consistency** and wether data for **higher taxonomy is missing**. 
+- As in 4.5, there’s a need to check the **line consistency** and whether data for **higher taxonomy is missing**. 
 -- Particular for the Excel templates is that synonyms are not declared in the same format as the accepted species, but are present in dedicated columns. To be validly declared, the accepted species to which the synonym refers has to be declared on a separate line (similar to higher taxonomy levels). However, as this is a easily overlooked by the editors, I propose to implement the option to **declare species based on information on line xx** as default option.
 -- Another line consistency check particular for data in the Excel-format is checking whether the “original_genus” is provided when the parentheses flag is set to “yes” and/or if “declension_species” is given. 
 
@@ -281,32 +276,30 @@ As 4.6.
 Similar to metadata inspector/editor under 4.3 but including all fields from the dataset table (e.g. abstract/description) and the new ones described under 2.3.
 
 ### 6.2 Synchronise data with BioFresh species register
-As a “final calculation” function, there is a need for synchronising the data imported into the FADA database/schema with the BioFresh species register table. In addition to the requirements needed for updating the biofresh_key tables, this also requires an overview of the updated “original combinations”*. In contrast to the species and synonyms, which are stored in a specific table, there is no separate table for these “original combinations”. A list has to be constructed by combining the information from the following fields; original_genus, declension_species or species (if the former is empty), year and author.
-
-* Original combinations are “previously accepted species name” which have become “objective synonyms” because the species has been moved to another Genus. In the Halacaridae example file, the species “Halacarellus hyrcanus (Viets 1928)” has as original combination “Caspihalacarus hyrcanus Viets 1928”. For some reason, these names are not stored in the synonym table, but are only referenced through a taxonID in the species table
- 
-[Sylvain-10/8/15] A pseudo algorithm would be greatly welcome.
-[Note Aaike] to be double checked with Michel
-
-### Evaluation for the sync with register data.
-The data in the register schema (register.biofreshspeciesregistry) cannot be linked to original combinations because they are not stored as concepts in the fada schema. (no special table or view). However we could check that a species has an original combination and create a record in the register table that will linked to it's accepted name record in the register table. 
-So if for an accepted species in the fada species table we find the same species in the register table. If the species found in the fada table has an original combination we try to find it in the register table. If the original combination cannot be found we can create it in the register and link it to the accepted name in the register.
+As a final step in the resource job, there is a need for synchronising the data imported into the FADA database/schema with the BioFresh species register table. In addition to the requirements needed for updating the biofresh_key tables, this also requires an overview of the updated “original combinations”*. In contrast to the species and synonyms, which are stored in a specific table, there is no separate table for these “original combinations”. A list has to be constructed by combining the information from the following fields; original_genus, declension_species or species (if the former is empty), year and author.
 
 As mentioned under 2.4, for new species names added to the FADA database, their presence in the BioFresh species register needs to be checked (as this register can be populated through other sources) based on the group and species name matching (both exact and phonetic).
 
 This will likely require an interface for validating the changes; (a) accept/ignore/link to existing for new entries, (b) check exact matches and accept to update “name source” to FADA, and (c) check phonetic matches and update name from FADA/add FADA name and keep name from register as synonym.
+
+#### FADA data compared to data in the BioFresh register
+Checking which entries are new, deleted and updated is similar to the process for the “preview” for importing data into the FADA database (The “Imported data compared to data in the database tables” section under 4.5 and 5.6), with the exception that it should additionally consider the “original combinations” as mentioned above. Matching between the entries in FADA and the register (register.biofreshspeciesregistry) can be done based on the biofresh_key and register_id (link established in the register_to_fada table). 
+
+For “original combinations”, their presence in the register can be checked using two methods; 
+1) by looking for entries where the register_id of the corresponding (accepted) species is stored in the relatedname_id field and the taxonomicstatus_id is set to 4 (which can only the case for 1 entry) or 
+2) based on name matching (using original_genus + species/declension_species on the side of FADA and genus + specificEpithet on the side of the register). 
+Original combinations are not (and cannot be) directly linked to FADA through the register_to_fada table, but instead resolve through the accepted species by storing the corresponding register_id in the relatedname_id field and get a taxonomicstatus_id=4. So, if an original combination cannot be found in the register, a new entry is created and and linked to the accepted name in the register.
+
+* Original combinations are “previously accepted species name” which have become “objective synonyms” because the species has been moved to another Genus. In the Halacaridae example file, the species “Halacarellus hyrcanus (Viets 1928)” has as original combination “Caspihalacarus hyrcanus Viets 1928”. For some reason, these names are not stored in the synonym table, but are only referenced through a taxonID in the species table
 
 ### 6.3 Synchronise the staging database with the production database
 In parallel to the developments of the FADA import tools, we will work out a solution to improve the synchronisation/replication of the staging database (for both the DPIT and FADA import tool) with the production database. If successful, we will provide the code to trigger the synchronisation for use with the “sync prod DB” button in the general interface.
 
 Note: this is not strictly part of the specifications. The production database synchronisation is indeed handled manually, nevertheless we are still looking (internally) for a better staging - sync setup to handle the database at Belspo and Gulledelle, and were wondering if the PostgreSQL replication functionality would be useful…
 
-Actually we should implement our initial agreement with BelSPO
-namely that we should have a 'staging' app using a 'staging' db.
+The ideal situation would be to set up a staging environment at the BBPF servers at BelSPO, however, we will first explore to set up such an environment at the BEDIC servers at Gulledelle.
 
-When staging DB is ready for prod then Julien only has to 
+The advantage of the former option is that once the staging DB is ready for production, the BBPF system administrator only has to 
 - delete the prod db
-- change the name of the staging DB to prod DB
-- prepare a new staging DB using any of those
-     a) eventually just create a shell empty DB we would do refill part
-     b) make a copy of the prod DB into a new staging DB. This requires more time and this is why a simple renaming is easier for the staging -> production step but we can take more time for creating a staging DB.
+- change the name of the staging db to prod db
+- prepare a new staging db by copying of the prod db into a new staging db. Copying first and using this db for production is also possible, but as this requires more time, a simple renaming is easier for the staging -> production step, while the time it takes to copy the database should be less of an issue when rebuilding the staging database.
