@@ -1,5 +1,5 @@
 # Specifications FADA import tool
-_Version 31/08/2015 - V1.1 Draft 3 - Pre-final version_ 
+_Version 04/09/2015 - V1.1 Draft 3 - Pre-final version_ 
 _Authors: Aaike De Wever, Michel Kapel_
 This document is used for launching a call for offers for developing the FADA import tool. This document is intended as a guidance for constructing the web application, but as it consists of a complex database and the reconciliation of the needs from ‘biologist’ users and the technical needs and possibilities, it is likely that specific requirements will have to be clarified and refined along the way. This version includes changes after the work of this tool was initiated.
 Supporting material for this specification document can be consulted at [https://github.com/aaikedw/fada-import-specs](https://github.com/aaikedw/fada-import-specs).
@@ -210,6 +210,7 @@ Inject data in database tables and update biofresh_key tables. Updating the biof
 
 The tables need to be filled in the order taxons > species > synonyms, to allow the latter tables to reference the former. The taxon table itself also needs to be filled in a hierarchical order, so lower taxonomic levels can reference the higher ones. More specifically, families are added first, followed by all declared sub elements down to the genus. Currently, the _Original genus_ and _Declension species_ are added to the taxon table before adding the (accepted) _genus_ (and any lower levels), but as these entries are not (necessarily) linked to a parent, this order is probably less important.
 While adding the species and subspecies taxons table, it is possible to create the species and subspecies records in the species table in parallel.
+Note: the scientific_name is “calculated”/concatenated as follows: Genus+” “ if provided “(“+Subgenus+”)”+ “ “+Species+” “if applicable+Subspecies+” “if Original genus is provided (parenthesis are “Y”)”(“+Author(s)+” “+Date+if Original genus is provided (parenthesis are “Y”)”)”. If present, the species group should also be added as “[species group]” in between subgenus and species. Similarly, the “genus_species_name” is the cannonical species name (without authorship info!), this is a concatenation of the following fields: Original genus [Synonym]+” “+ Species/Subspecies [Synonym] OR if synonym for a genus Genus/Subgenus [Synonym] and is set during injection.
 Once all taxon elements and species are created, we currently launch the process to link groups to a specific taxon level. This is done by identifying the highest taxon rank which is unique to the group. This information is important for the FADA app, to identify the highest taxon level to be shown when browsing the group.
 Finally, the synonyms are processed and stored in the synonyms table.
 
@@ -242,7 +243,7 @@ Note: The information on the Principal editor is stored in the users-table rathe
 
 We propose to include file upload (from the operator’s computer) as part of resource creation. In case of file upload errors, the application should offer a retry option before closing the resource creation window and process.
 
-Note: From a practical perspective we will split this in two stages again: 1) resource creation (only selecting the species group from a dropdown) as a separate step from 2) data download and metadata creation/upload. This roughly corresponds to Fig. 9, where the upper left dialog would represent a separate processing step.
+Note: From a practical perspective we will split this in two stages again: 1) resource creation (only selecting the organism group from a dropdown) as a separate step from 2) data download and metadata creation/upload. This roughly corresponds to Fig. 9, where the upper left dialog would represent a separate processing step.
 
 ### 5.4 Checking column mapping
 The use of Excel files makes it impossible to be certain of the structure of the files that are sent to us. Contributors can make errors in data structure, field positions, start of data in excel sheets, etc. It is therefore necessary for the operator to make sure that the files comply with one of the two templates that have been agreed on. Essentially this is a check of columns and data position. The easiest solution seems a quick visual checking mechanism to validate the field mapping. This is illustrated in [./UI-screenshots/7FADA-import_tool-mockup-column_mapping.png](./UI-screenshots/7FADA-import_tool-mockup-column_mapping.png).
@@ -253,6 +254,7 @@ Note: Fig. 11 shows a multi row comparison for the visual column mapping tool. F
 The upload step is the reading data from Excel files and storing it in tables in a staging area.
 Upload happens per group. The files to process are all located in a directory specific for the group/resource (named after the group’s name) and all loaded one by one.
 The upload process looks for three sheets of data are identified based on their names, which can already be validated while checking the column mapping. Each sheet – “Taxonomy”, “Faunistic” and “References” respectively – is stored in a dedicated import table (taxa_table, distr_table, ref_table).
+Note: Currently the taxon rank for each record is calculated at upload, which aids further processing.
 
 ### 5.6 Validation
 #### Data in staging tables
@@ -266,7 +268,20 @@ The upload process looks for three sheets of data are identified based on their 
 
 #### Imported data compared to data in the database tables
 The validation in comparison to data already in the database is also similar to 4.5, with the exception that it cannot be done based on IDs, and can exclusively be performed through name matching.
-[Note Aaike: to be double checked with Michel] This name matching is based on a concatenation of Genus, (subgenus), species, subspecies/infraspecificEpithet, author and year. I wonder whether it makes sense to have a 2 level matching, one stricter (all name elements present incl. species group and authorship details) and one less strict (only Genus + species + subspecies/infraspecificEpithet)?
+
+Currently the “import preview” is primarily focusing on the taxons table. The first step is to construct an in-memory version of the taxons table (covering the name, rank, group_id, and parent_id fields) based on the imported data (“as these data would be injected”). This is done by constructing a tree for all families within a group starting at the family level and drilling down to species/subspecies level as applicable.
+
+Once this in-memory table is built, it can be compared to the data present in the fada.taxons table to detect which entries are new. Currently this comparison itself is also organised in a hierarchical manner, i.e. starting by checking the presence of families, subfamilies, and moving down.
+
+This comparison is also performed in reverse, i.e. checking which entries from fada.taxons are not present in the in-memory table, to detect entries that have been deleted in the updated checklist. We propose to implement a similar approach, but additionally check whether the author(s) and year are identical or updated.
+
+A full comparison of (species present in) the imported taxon tables with the fada.species table is not absolutely necessary as the content overlaps strongly with that of the taxon table. In the current processing, such a check is only performed for the original species names (Original genus + declension species/species). Similarly, the checking of the entries in the synonyms table could be restricted to the information in the genus_species name (and possibly author and year) to check whether these names are present.
+
+Additionally, a similar process as for the taxons table should be implemented for the faunistic information (including the newly added environment flags). This could be done by constructing an in-memory version of the faunistic table for comparing with the information in the fada database.
+
+Identifying whether a record in the species table concerns the same species as in the imported data should be done based on name matching (which is currently done for re-linking the species table and the biofresh_key_species table) and is based on a concatenation of Genus, (subgenus), species, subspecies/infraspecificEpithet. Author and year are currently not considered in this check, but should be compared in a next step to identify any updates to the information in these fields.
+
+If a name is not found during these comparisons, a phonetic match/matching based on Levenshtein’s distance, offering the possibility to “use to update suggested taxon” (cfr. the link to suggestion option in the DPIT-tool) to the operator would be ideal (as mentioned under 2.4 and 4.5), so the original IDs for these entries can be maintained.
 
 ### 5.7 Import
 As 4.6.
@@ -276,6 +291,8 @@ As 4.6.
 Similar to metadata inspector/editor under 4.3 but including all fields from the dataset table (e.g. abstract/description) and the new ones described under 2.3.
 
 ### 6.2 Synchronise data with BioFresh species register
+Note: this sync is preceded by the synchronisation between the fada.taxons/species/synonyms table with the biofresh_key_taxons/species/synonyms tables. As described under 2.3 the details of this sync process depend on the choices made with regards to database refactoring, and as mentioned in 4.6 ideally are catered for during data injection.
+
 As a final step in the resource job, there is a need for synchronising the data imported into the FADA database/schema with the BioFresh species register table. In addition to the requirements needed for updating the biofresh_key tables, this also requires an overview of the updated “original combinations”*. In contrast to the species and synonyms, which are stored in a specific table, there is no separate table for these “original combinations”. A list has to be constructed by combining the information from the following fields; original_genus, declension_species or species (if the former is empty), year and author.
 
 As mentioned under 2.4, for new species names added to the FADA database, their presence in the BioFresh species register needs to be checked (as this register can be populated through other sources) based on the group and species name matching (both exact and phonetic).
