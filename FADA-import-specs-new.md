@@ -146,7 +146,7 @@ Note: Originally the Excel overview was constructed more from the perspective of
 -- The field taxonRank should correspond to the control vocabulary: “subspecies”, “varietas”, “forma”, “species”, “genus”
 -- The field taxonomicStatus should correspond to the control vocabulary: “invalid”, “misapplied”, “homotypic synonym”, “accepted”
 -- Check whether the field datasetID contains an URL
--- The fields isMarine, isFreshwater, isTerrestrial, isBrackish and  isExtinct, isPreferredName should contain boolean values or values that can be translated to booleans 0/1, t/f, TRUE/FALSE, y/n
+-- The fields isMarine, isFreshwater, isTerrestrial, isBrackish and  isExtinct, [isPreferredName][1] should contain boolean values or values that can be translated to booleans 0/1, t/f, TRUE/FALSE, y/n
 -- language should correspond to the ISO 639-1 language code and countryCode should be 2-3 characters (ISO3166 alpha 2 (3 is permissable) country codes)
 -- startDayOfYear and endDayOfYear should be between 1 and 365
 
@@ -320,3 +320,5 @@ The advantage of the former option is that once the staging DB is ready for prod
 - delete the prod db
 - change the name of the staging db to prod db
 - prepare a new staging db by copying of the prod db into a new staging db. Copying first and using this db for production is also possible, but as this requires more time, a simple renaming is easier for the staging -> production step, while the time it takes to copy the database should be less of an issue when rebuilding the staging database.
+
+[^1]: Although the isPreferred term is mentioned here, and is potentially present in Darwin Core-Archive files that have to be treated, this field is not of relevance for FADA as this term is  part of the vernacularName-extension which would be ignored for FADA.
