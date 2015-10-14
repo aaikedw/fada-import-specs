@@ -1,5 +1,5 @@
 # Specifications FADA database schema and import template changes
-_Version 24/09/2015 - Draft 1_
+_Version 14/10/2015 - Draft 2.1_
 _Authors: Aaike De Wever, Michel Kapel_
 
 ## About this document
@@ -33,9 +33,10 @@ The following fields were present in earlier versions of the Excel sheet, but ha
 - Aquatic/water dependent	(spelling change dependant > dependent)
 - Aquatic/water dependent-subcategory
 
-Corresponding fields in the database will need to be created to ensure the storage of its content (see 2.3 and 2.4). Ideally the TDWG codes should also be parsed in the regions table. This will be discussed under 3.5.
+Corresponding fields in the database will need to be created to ensure the storage of its content (see 2.3 and 2.4). Ideally the TDWG codes should also be parsed in the regions table. This is discussed under 3.5.
 
 ### 1.2 Updates to FADA input file guidelines
+**Remains to be updated in Word instruction file. Awaiting reply from Estelle and Pablo before finalisation**
 In addition to the database changes with regards to the “environment flags”, the recommendations for filling these fields is integrated in the FADA input file guidelines [FADA input file guidelines-v2.1.doc](./excel-templates/FADA%20input%20file%20guidelines-v2.1.doc). Changes include:
 - Recommended control vocabulary for Aquatic/Water Dependent and its sub categories to be added.
 - Recommended input for the “environment flags”. State explicitly that unless specified otherwise (so even if this columns are empty!), the checklist entries are considered as being freshwater by default. Marine (only) species which have been included in the checklist should be clearly identified as such by entering “N” in the isFreshwater column and “Y” for isMarine.
@@ -43,12 +44,11 @@ In addition to the database changes with regards to the “environment flags”,
 ### 1.3 Note on future improvements to the Excel template
 To be considered for future updates: 
 - Include “isExtinct” flag for dealing with fossil species
-- Offering the possibility to export data from the FADA database in the FADA-Excel-template format would allow to include record IDs and timestamps straight in the Excel file.
+- Offering the possibility to export data from the FADA database in the FADA-Excel-template format would allow to include the “biofresh key” (which is our internal “provider record ID”) and timestamps straight in the Excel file.
 
 ## 2. New fields and types of information
 ### 2.1 “Species group” information
-**Note: Please disregard this section for the time being.** This section requires rewording, but I am currently waiting for feedback from Koen, as I am not entirely sure whether there is a need for including “species group” in species table and implementing an alternative speciesName calculation method. 
-
+**Note: Please disregard this section for the time being.** This section requires rewording. Probably no need for changing “name calculation” (as suggested by Koen Martens). I am checking with the Simuliidae editors for confirmation. 
 
 [temp]The integration of Simuliidae species and possibly other species group requires to add another taxonomic level we will call "species group".
 This new level is situated between a subgenus and a species.
@@ -68,7 +68,7 @@ The best solution is probably to have the timestamp representing the last modifi
 
 > _Quote from the FADA-import-specs:_ The isFreshwater (default yes for FADA datasets), isMarine, isTerrestrial, isBrackish fields/flags (also to be added to the xls-template) and “Freshwater aquatic/water dependent” category and subcategory (in xls-template, but currently not stored in the database itself (other than in the import “distr_table”)). This could be either implemented in the species table or a separate table (cfr. the regions table).
 
-The following fields have to be added to either the species table or a separate, new “speciesProfile” table (the latter would have the advantage that we only specify these flags if they were provided in the source data) - **for discussion with Sylvain**. The corresponding Darwin Core terms and/or field names used in the Excel templates are given in parentheses.
+The following fields have to be added to either the species table or a separate, new “speciesProfile” table (the latter would have the advantage that we only specify these flags if they were provided in the source data). The corresponding Darwin Core terms and/or field names used in the Excel templates are given in parentheses.
 - freshwater (isFreshwater)
 - terrestrial (isTerrestrial)
 - brackish (isBrackish)
@@ -92,22 +92,27 @@ The TDWG Geographic Region classification matches the TDWG-standard “World Geo
 
 The Darwin Core field locationID is defined as “A code for the named area this distribution record is about. Use a prefix for each code to indicate the source of the code, see http://rs.gbif.org/areas/ for list of coding schemes and their recommended prefix. see also http://rs.gbif.org/areas/”. The idea would be to store the area prefix and the code separately in the regions table. See 3.5 for further details.
 
-### 2.5 “provider IDs”
+### 2.5 “provider IDs” or rather “provider taxon IDs”
 > _Quote from the FADA-import-specs:_ Need to conserve “provider IDs” for taxons and species names need to be considered. Can this be done by updating the “biofresh key”-tables or should we work out another solution?
 
 This refers to the taxonID present in Darwin Core files, for which the combination “provider” (or “resource” —which comes from a single provider anyway) and “taxonID” is unique. The main interest in conserving this provider ID is that it will allow to detect changes for individual records more easily by comparing the record to be imported with record already in the database that carries the same (provider)ID.
 
-During discussion with Michel, we identified two possible approaches: 1) store the providerID only in the import schema and perform the comparison with previously imported data which is retained in this schema or 2) (also) store the providerIDs in the taxons, species and synonyms table. **For discussion with Sylvain**
+During discussion with Michel, we identified two possible approaches: 1) store the providerID only in the import schema and perform the comparison with previously imported data which is retained in this schema or 2) (also) store the providerIDs in the taxons, species and synonyms table. 
+**Remains to be discussed / To be double checked:** I somehow understood that for comparison reason, storing the data in the import schema would be the best solution and would not require to store the ID in the actual FADA schema. My understanding was however that for specific reasons it was still interesting to also store the taxon/species IDs in the FADA schema, but I was not sure if this was something we wanted to do in general or not?
 
 In case we opt for the 2nd option, this will probably need to be stored in two fields: a) provider and b) providerID who’s combination should be unique. This would mean that the providerIDs are used in a very similar way to the biofresh_keys when exporting data from the FADA database. If so, we could consider moving these IDs to the same field(s).
 
+### 2.6 parenthesis flag
+The excel template includes a parenthesis flag. Currently this flag is only used (a) for checking the consistency with the information provided in the Original genus and declension species fields and (b) during the generation of the scientific name, but this information is currently not stored. For this reason it seems that in a number of cases it is not possible to reassemble the correct full scientific name based on the information in the species table (e.g. original genus is not always provided or the parenthesis flag is deliberately set to no, as for the macrophytes). As it would be rather straightforward to add this field, we are currently considering to do so.
+
+Another alternative would be to store this information (author, year, parenthesis) as “authorship” rather than as atomised values. This may however have an impact on the FADA app, search functionalities in the BioFresh portal etc. so in case this would seem the better option, we should carefully consider its impact on the applications running on the database.
 
 ## 3. Corresponding changes to FADA tables
 ### 3.1 Updates to the taxon table
 Changes in the taxon table depend on the choices with regards to the implementation of timestamps (2.2) and providerIDs (2.5). 
 
 ### 3.2 Updates to the species table
-Changes to the species table include the addition of a timestamp (2.2). The inclusion of the “species_group” field and the change in the calculation of the scientific_name field has to be decided (2.1). The inclusion of the environment flags (2.3) depends on the choice whether to store this in this table or a separate “speciesProfile” table. If included in the fada-schema, the providerID field(s) (2.5) also need to be added to the species table. 
+Changes to the species table include the addition of a timestamp (2.2). The inclusion of the “species_group” field and the change in the calculation of the scientific_name field has to be decided (2.1). The inclusion of the environment flags (2.3) depends on the choice whether to store this in this table or a separate “speciesProfile” table. If included in the fada-schema, the providerID field(s) (2.5) also need to be added to the species table. The parenthesis flag (2.6) should also be added if agreed.
 
 _Note: The script database-info/fada-tables/species_changes.sql needs to be updated to reflect these choices. For the environment flags, only isFreshwater should be set to TRUE by default, while leaving other fields empty._
 
@@ -149,11 +154,11 @@ Currently the greferences table is the one and only table containing bibliograph
 
 Adding:
 - bibliographic_citation (bibliographicCitation)
-- linking with species, taxa and faunistic info (through new species_references, taxa_references and faunistic_references?)
+- linking with species, taxa and faunistic info (through new species_references, taxa_references and faunistic_references tables?)
 
 The new “bibliographic_citation” field is meant to store the full citation for a species or taxon as provided in the Darwin Core-Archive files as parsing the field is likely to be very complex. For the current content and references coming from Excel-template data, this field would need to be constructed by concatenating author, year (to be put between parentheses), title and source.
 
-#### Integration the publications table [to be handled by RBINS team]
+#### Integration of the publications table [to be handled by RBINS team]
 The publications (and import_publications) table were added by Michel to process new bibliographic data for the Rotifera group. Ideally these info should have been stored in the greference table, but the info in the publications table is more atomised. The following fields are present in the publications table, but not in the greferences one:
 - publisher
 - volume
@@ -187,7 +192,8 @@ The possibility and advantages/disadvantages of this proposed approach (or any a
 ### 4.4 Other potential improvements
 In addition to the required changes described above, we identified a number of issues that merit to be considered to facilitate future developments;
 
-- While the species table currently contains a “status_id” field and the entries in the synonyms table are by definition all invalid, subjective synonyms, this is not a straightforward solution to provide the “taxonomicStatus” in the DwC-A-export (esp. for providing the “original combination” or “objective synonym”/“basionym” or “homotypic synonym” - terms respectively used in zoology/botany). A solution for this issue should be considered while addressing the FADA database structure. The main question will be whether this issue can be solved without breaking the backward compatibility with the FADA app.
+- While the species table currently contains a “status_id” field and the entries in the synonyms table are by definition all invalid, subjective synonyms, this is not a straightforward solution to provide the “taxonomicStatus” in the DwC-A-export (esp. for providing the “original combination” or “objective synonym”/“basionym” or “homotypic synonym” - terms respectively used in zoology/botany). A solution for this issue should be considered while addressing the FADA database structure. The main question will be whether this issue can be solved without breaking the backward compatibility with the FADA app. 
+- A relatively straightforward option (but again with probable impact on the FADA app) is joining the species and synonyms table. At this stage, we suggest to limit the work to exploring the implications on the FADA app.
 
 The following is not necessarily a database refactoring task, but should be considered all along;
 
@@ -201,6 +207,6 @@ The following is not necessarily a database refactoring task, but should be cons
 The FADA app could possibly show non aquatic species. This is not a problem, but flagging the (few) marine representatives would be appropriate (in the longer term). The number of non-freshwater representatives should remain low as only Excel imported groups are allowed to contain non-freshwater representatives, while these entries have to be filtered out when processing DwC-A file.
 
 ### 5.2 BioFresh application
-An **important issue** we overlooked during in de FADA import tool specs is the fact that non-freshwater representatives should be filtered out when synchronising data with the BioFresh species register. This change in the specs should still be considered for the development of the import tool, if necessary to be covered as part of the database refactoring work. **Sylvain, please take note!**
+An **important issue** we overlooked during in de FADA import tool specs is the fact that non-freshwater representatives should be filtered out when synchronising data with the BioFresh species register. This change in the specs should still be considered for the development of the import tool, if necessary to be covered as part of the database refactoring work.
 
 In the longer term, the format of the data downloaded through BioFresh should be reviewed to ensure all data includes correct credits, we can offer complete information (e.g. also offering DwC-format data) and data that may not be offered for download is excluded.

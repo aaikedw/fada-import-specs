@@ -1,5 +1,5 @@
 # Specifications FADA import tool
-_Version 04/09/2015 - V1.1 Draft 3 - Pre-final version_ 
+_Version 14/10/2015 - V1.1 Draft 3.1 - Pre-final version_ 
 _Authors: Aaike De Wever, Michel Kapel_
 This document is used for launching a call for offers for developing the FADA import tool. This document is intended as a guidance for constructing the web application, but as it consists of a complex database and the reconciliation of the needs from ‘biologist’ users and the technical needs and possibilities, it is likely that specific requirements will have to be clarified and refined along the way. This version includes changes after the work of this tool was initiated.
 Supporting material for this specification document can be consulted at [https://github.com/aaikedw/fada-import-specs](https://github.com/aaikedw/fada-import-specs).
@@ -22,7 +22,7 @@ For database purposes and/or because no taxonomic editor is found to provide a c
 
 In terms of size, the checklist for the different groups vary from not even 100 species names to around 16.000 names for Vertebrates-Fish. Unless, at some stage we will further extend the scope at the database to non-animal freshwater groups (other than the [“Macrophytes”](http://en.wikipedia.org/wiki/Macrophyte) group, which is currently included), which is unlikely to happen within the duration of the [AquaRES project](http://odnature.naturalsciences.be/aquares/), the total number of (accepted) species names is unlikely surpass 200.000 and 16.000 for individual groups in the near future. 
 
-Note: As DwC-A files may include non-freshwater species (which have to be filtered out at some stage), the number of records in these files can be higher.
+Note: As DwC-A files may include non-freshwater and fossil species (which have to be filtered out at some stage), the number of records in these files can be higher.
 
 [^1]: The “operational unit” can be referred to as “Group”, “Data source” or “Resource”. In this document the term “group” is used to stress the link with taxonomic unit, whereas “resource” is used when discussing the digital representation of such a group (e.g. as an ‘import unit’ and its associated file).
 
@@ -125,6 +125,8 @@ Once finished, the operator should be presented with an overview of the resource
 
 ### 4.4 Data load
 Load data in flat taxon, speciesProfile, Reference and Distribution table in staging area.
+
+**New:** Before proceeding to the next steps any species with the isFreshwater flag “N” or the isExtinct flag “Y” should be deleted.
 
 ### 4.5 Validation
 #### Data in staging tables
@@ -292,6 +294,8 @@ Similar to metadata inspector/editor under 4.3 but including all fields from the
 
 ### 6.2 Synchronise data with BioFresh species register
 Note: this sync is preceded by the synchronisation between the fada.taxons/species/synonyms table with the biofresh_key_taxons/species/synonyms tables. As described under 2.3 the details of this sync process depend on the choices made with regards to database refactoring, and as mentioned in 4.6 ideally are catered for during data injection.
+
+**New:** As the FADA database potentially contains non-freshwater taxa (only for data imported in Excel format) and these are not supposed to be propagated to the BioFresh species register, these entries have to be filtered out / disregarded when syncing the data.
 
 As a final step in the resource job, there is a need for synchronising the data imported into the FADA database/schema with the BioFresh species register table. In addition to the requirements needed for updating the biofresh_key tables, this also requires an overview of the updated “original combinations”*. In contrast to the species and synonyms, which are stored in a specific table, there is no separate table for these “original combinations”. A list has to be constructed by combining the information from the following fields; original_genus, declension_species or species (if the former is empty), year and author.
 
