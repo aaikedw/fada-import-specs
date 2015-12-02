@@ -222,6 +222,8 @@ While scripts for importing data are currently available for importing Excel dat
 ### 5.1 Envisaged Excel input format
 Excel-data are provided in an [excel-template](./excel-templates), for which there are currently 2 “recognised” versions. A slightly modified version (**2.1**) including the columns isFreshwater, isMarine, isTerrestrial and isBrackish will need to be prepared reflecting the planned database changes (see 2.3). While editors previously had the possibility to provide checklist data through multiple files for a single group/resource, we may choose to abort this option for simplicities sake (if necessary we can still manually join the files). 
 
+Note: as specified in the [FADA-database-changes.md](./FADA-database-changes.md) document, specific fields (_exotic_ and _bodyMass_) and worksheets (conservation) are not stored in the database.
+
 ### 5.2 Main processing steps
 #### xls specific processing
 - creating resource and validating metadata (see 5.3)

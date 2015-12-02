@@ -1,5 +1,5 @@
 # Specifications FADA database schema and import template changes
-_Version 14/10/2015 - Draft 2.1_
+_Version 02/12/2015 - Draft 2.1 prefinal version_
 _Authors: Aaike De Wever, Michel Kapel_
 
 ## About this document
@@ -21,25 +21,29 @@ The following new fields were added at the end of the faunistic sheet (columns Y
 Together I’ll refer to these fields as “environment flags”. The updated template is: [Input_FADA_File_v2.1.xls](./excel-templates/Input_FADA_File_v2.1.xls).
 
 _Note 1:_ The Darwin Core standard also includes an _isExtinct_ flag, and it was selected as a required field for the AquaRES exchange. However, as the FADA initiative is currently not considering to include fossils, I see no need to include this flag during this update. During export, this flag will be set to “N” by default.
-_Note 2:_ The specification document also mentions the field isPreferredName, but as this refers to vernacular names, which are not stored in FADA, it is not relevant to add it after all.
+_Note 2:_ The specification document also mentions the field _isPreferredName_, but as this refers to vernacular names, which are not stored in FADA, it is not relevant to add it after all.
 
 The following fields were present in earlier versions of the Excel sheet, but have not been processed so far:
 - TDWG 3rd level codes (“, separated by comma” moved to lower row” during the version 2.1 update)
 - lentic (for convenience the “?” was removed from the field name cfr. previous template versions)
 - lotic (“?” was removed as for lentic)
-- exotic
-- bodyMass
-- Parasitic
+- Parasitic (for this field we specified that the name of the host specie(s) is expected here as comma separated list)
 - Aquatic/water dependent	(spelling change dependant > dependent)
 - Aquatic/water dependent-subcategory
 
 Corresponding fields in the database will need to be created to ensure the storage of its content (see 2.3 and 2.4). Ideally the TDWG codes should also be parsed in the regions table. This is discussed under 3.5.
 
+The fields:
+- exotic
+- bodyMass
+
+were retained for backward compatibility, but as these are ambiguous (and rarely used), there is no need to add these fields to the database.
+
 ### 1.2 Updates to FADA input file guidelines
-**Remains to be updated in Word instruction file. Awaiting reply from Estelle and Pablo before finalisation**
 In addition to the database changes with regards to the “environment flags”, the recommendations for filling these fields is integrated in the FADA input file guidelines [FADA input file guidelines-v2.1.doc](./excel-templates/FADA%20input%20file%20guidelines-v2.1.doc). Changes include:
 - Recommended control vocabulary for Aquatic/Water Dependent and its sub categories to be added.
-- Recommended input for the “environment flags”. State explicitly that unless specified otherwise (so even if this columns are empty!), the checklist entries are considered as being freshwater by default. Marine (only) species which have been included in the checklist should be clearly identified as such by entering “N” in the isFreshwater column and “Y” for isMarine.
+- Recommended input for the “environment flags”. In the instructions, it is stated explicitly that unless specified otherwise (so even if this columns are empty!), the checklist entries are considered as being freshwater by default. Marine (only) species which have been included in the checklist should be clearly identified as such by entering “N” in the isFreshwater column and “Y” for isMarine.
+- Documentation for the other environmental information fields was added as well, and the fact that _exotic_ and _bodyMass_ are not stored is mentioned.
 
 ### 1.3 Note on future improvements to the Excel template
 To be considered for future updates: 
@@ -48,21 +52,14 @@ To be considered for future updates:
 
 ## 2. New fields and types of information
 ### 2.1 “Species group” information
-**Note: Please disregard this section for the time being.** This section requires rewording. Probably no need for changing “name calculation” (as suggested by Koen Martens). I am checking with the Simuliidae editors for confirmation. 
-
-[temp]The integration of Simuliidae species and possibly other species group requires to add another taxonomic level we will call "species group".
-This new level is situated between a subgenus and a species.
-The introduction of this level required a 
-new record in table fada.rank 
-a new field in table fada.species
-a change in how a species name is calculated.[temp]
-
-[temp]It remains to be seen what changes could be necessary to integrate this new level in our observation data import tool (DPIT) and how we will link names with speciesgroups from the registery to the taxonomic part.[temp]
+Although we were initially anticipating changes related to the “species group” information, we realised that no changes were needed at the database level. As this information is not required to generate the full scientific name, there is no need to include this field in the species table.
 
 ### 2.2 “modified” timestamp
 > _Quote from the FADA-import-specs:_ “A record level “modified” timestamp, this could be coupled to the import log timestamp”
 
-The best solution is probably to have the timestamp representing the last modification date in the taxa, species, synonyms, regions_species and greferences table for individual records. See the description of the “Changes to FADA tables” for further information.
+On 02/12/2015, Michel & Aaike, discussed the possibility to have a separate “modification log” table with fields _table_, _recordID_, _field_, _previous_field_content_ and _timestamp_ rather than having the timestamp field in the majority of the tables. **Michel is currently exploring whether this can be implemented at the level of Postgres. This option remains to be discussed with Sylvain.**
+
+[Ignore for time being, probably replaced by above solution>] The best solution is probably to have the timestamp representing the last modification date in the taxa, species, synonyms, regions_species and greferences table for individual records. See the description of the “Changes to FADA tables” for further information. [<Ignore]
 
 ### 2.3 Environment flags
 
@@ -75,13 +72,11 @@ The following fields have to be added to either the species table or a separate,
 - marine (isMarine)
 - lentic
 - lotic
-- exotic
-- body_mass (bodyMass)
-- parasitic (Parasitic)
+- parasitic (Parasitic) - as text field (no further processing)
 - aquatic_wd (Aquatic/water dependent)
 - aquatic_wd_subcategory (Aquatic/water dependent-subcategory)
 
-For these fields, the import tool should process a variety of input as booleans e.g. Y, y, T, 1, x / N, n, F, 0, -
+For these fields, the import tool should process a variety of input as booleans e.g. Y, y, T, 1, x / N, n, F, 0, -. Note that we decided not to add the fields _exotic_ and _body_mass (bodyMass)_ to the database.
 
 ### 2.4 Faunistic regions and other geographic region data
 The following information, which can be provided through respectively the FADA-templates and the Darwin Core-Archive format are currently not stored in the FADA-database. The regions table will need to be adapted to store the information in these fields.
@@ -95,19 +90,22 @@ The Darwin Core field locationID is defined as “A code for the named area this
 ### 2.5 “provider IDs” or rather “provider taxon IDs”
 > _Quote from the FADA-import-specs:_ Need to conserve “provider IDs” for taxons and species names need to be considered. Can this be done by updating the “biofresh key”-tables or should we work out another solution?
 
-This refers to the taxonID present in Darwin Core files, for which the combination “provider” (or “resource” —which comes from a single provider anyway) and “taxonID” is unique. The main interest in conserving this provider ID is that it will allow to detect changes for individual records more easily by comparing the record to be imported with record already in the database that carries the same (provider)ID.
+This refers to the taxonID present in Darwin Core files, for which the combination “provider” (or “resource” —which comes from a single provider anyway) and “taxonID” is unique. The main interest in conserving this provider taxon ID (formerly erroneously called “provider ID”) is that it will allow to detect changes for individual records more easily by comparing the record to be imported with record already in the database that carries the same (provider)ID.
 
-During discussion with Michel, we identified two possible approaches: 1) store the providerID only in the import schema and perform the comparison with previously imported data which is retained in this schema or 2) (also) store the providerIDs in the taxons, species and synonyms table. 
-**Remains to be discussed / To be double checked:** I somehow understood that for comparison reason, storing the data in the import schema would be the best solution and would not require to store the ID in the actual FADA schema. My understanding was however that for specific reasons it was still interesting to also store the taxon/species IDs in the FADA schema, but I was not sure if this was something we wanted to do in general or not?
+During discussion with Michel, we originally identified two possible approaches: 1) store the providerID only in the import schema and perform the comparison with previously imported data which is retained in this schema or 2) (also) store the providerIDs in the taxons, species and synonyms table.
 
-In case we opt for the 2nd option, this will probably need to be stored in two fields: a) provider and b) providerID who’s combination should be unique. This would mean that the providerIDs are used in a very similar way to the biofresh_keys when exporting data from the FADA database. If so, we could consider moving these IDs to the same field(s).
+Following further discussion, we propose to (a) include a table containing the _provider(ID or name)_, _provider_taxon_ID_ and _biofresh_key_taxon_ and (b) retain the previously imported data in the import schema for comparison. This would allow an easy evaluation of changes between the current and previous import and should help to ignore records that are exactly the same between the 2 imports. **Remains to be decided after consulting Sylvain**
 
 ### 2.6 parenthesis flag
+**Inform Sylvain about this change!**
 The excel template includes a parenthesis flag. Currently this flag is only used (a) for checking the consistency with the information provided in the Original genus and declension species fields and (b) during the generation of the scientific name, but this information is currently not stored. For this reason it seems that in a number of cases it is not possible to reassemble the correct full scientific name based on the information in the species table (e.g. original genus is not always provided or the parenthesis flag is deliberately set to no, as for the macrophytes). As it would be rather straightforward to add this field, we are currently considering to do so.
 
-Another alternative would be to store this information (author, year, parenthesis) as “authorship” rather than as atomised values. This may however have an impact on the FADA app, search functionalities in the BioFresh portal etc. so in case this would seem the better option, we should carefully consider its impact on the applications running on the database.
+Another alternative would be to store this information (author, year, parenthesis) as “authorship” rather than as atomised values. This may however have an impact on the FADA app, search functionalities in the BioFresh portal etc. so in case this would seem the better option, we should carefully consider its impact on the applications running on the database. 
 
 ## 3. Corresponding changes to FADA tables
+**Update reflecting the approach for storing timestamps and providerIDs**
+Note: Michel will create a branch in the GitHub repository “data-import-tools-doc” to prepare the alter tables scripts to be applied as well as the updated schema(s). The branch will be merged with the master after issuing a pull request to allow discussion and refinement of the scripts.
+
 ### 3.1 Updates to the taxon table
 Changes in the taxon table depend on the choices with regards to the implementation of timestamps (2.2) and providerIDs (2.5). 
 
@@ -144,10 +142,30 @@ The date fields
 are currently manually filled through the web interface, if possible it would be useful to auto-update at least the “published_date” when finalising the resource processing  (in the updated overview table of the groups only this field will be publicly shown). Otherwise, the other option would be to include another “modified” timestamp (2.2) as done for the previous tables.
 
 ### 3.5 Updates to the regions table
-The current regions table consists of the fields: id, code, name, parent_id and distribution. To accommodate storing other types of area/region names, we would need a new field to store the region_type/area_prefix, which could be used to store TDWG codes as well as other codes provided through the DwC _locationID_ which has the format prefix:code.
+The current regions table consists of the fields: id, code, name, parent_id and distribution. To accommodate storing other types of area/region names, we would need a new field to store the region_type/area_prefix, which could be used to store TDWG codes as well as other codes provided through the DwC _locationID_ which has the format prefix:code (see [GBIF documentation](http://rs.gbif.org/areas/) on this topic).
 In addition, as the DwC-A files can both contain a locationID and a countryCode, the latter field would need to be added to the regions table as well.
 
-In terms of organisation of the tables, Michel proposed to rename the extended table as “regions_all” and create a view “regions” corresponding to the current content of this table, which would still allow the FADA-app to only call this overview which only contains the FADA-faunistic zone info. Similarly we could create a regions_tdwg table in case this would be needed. 
+In terms of organisation of the tables, Michel proposed to rename the extended table as “regions_all” and create a view “regions” corresponding to the current content of this table, which would still allow the FADA-app to only call this overview which only contains the FADA-faunistic zone info. Similarly we could create a regions_tdwg table in case this would be needed.
+
+**To be verified with current table fieldnames**
+Example input from Excel-template TDWG 3rd level codes column:
+“POL-OO, PAL-IS” 
+Would be stored as:
+ID region_type	 code
+xx TDWG        POL-OO
+xx TDWG        PAL-IS
+
+Example input from DwC-A file _locationID_:
+“ISO:DK”
+Would be stored as:
+ID region_type	 code
+xx ISO         DK
+
+Example input from DwC-A file _countryCode_:
+“DK”
+Would be stored as (if not already stored from _locationID_):
+ID region_type	 code
+xx ISO         DK
 
 ### 3.6 Updates to the greferences table
 Currently the greferences table is the one and only table containing bibliographic references in the FADA database that is used in the FADA app/website. Moreover, the links with individual taxa, species or faunistic info is not stored, although editor can potentially provide this information by using the refkey-field. This is an omission that absolutely needs to be corrected.
