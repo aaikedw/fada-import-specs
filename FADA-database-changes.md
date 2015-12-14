@@ -197,7 +197,7 @@ The easiest solution for transferring this info to the greference table is to co
 ### 3.6 New species_profile table
 The environment flags (2.3) will be stored in a dedicated table and are linked to the species table using the species_id.
 
-_Note: For the environment flags, although isFreshwater=TRUE is assumed if no data is provide, this should not be set to TRUE by default at database level. During export, we will however do so if no information is available. Ideally we should consult our editors to validate this information so it can actually be stored as such in the database._
+_Note: For the environment flags, although isFreshwater=TRUE is assumed if no data is provided, this should not be set to TRUE by default at database level. During export, we will however do so if no information is available. Ideally we should consult our editors to validate this information so it can actually be stored as such in the database._
 
 ## 4. FADA database refactoring
 
