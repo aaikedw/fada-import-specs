@@ -97,7 +97,8 @@ These two modules need to be integrated in a joint interface with the following 
 - General workflow: Similar to the DPIT, the FADA import tool acts on a staging database, which can easily be copied/synced with the production database. If feasible, we would opt to use the same staging database.
 - [Clarification] As mentioned in Fig. 8 _“also show groups that are present in the db but have not previously been created/processed through the web tool”_, it would be nice if a resource (without associated job) could be created in the database, so it shows up in the interface. As all groups currently present in the database were imported from xls files, this is only relevant for this resource type. On 28/8/2015 it was agreed to implement this option unless it would conflict with other requirements of the app, would require too much work or change the current logic of the app.
 - [Clarification] As mentioned in Fig. 4, the “Sync BioFresh register” could be considered as a resource specific function or a global one. During discussion on 28/8/2015, it was agreed that implementing this functionality as part of the resource job was the most logical option.
-- [Clarification/New] While this is implicit in several of the mock-ups (Fig. 6 “re-download”, Fig. 12 “re-upload file” and Fig. 11: “Re-upload file”), this was not clearly mentioned as a functionality in the specifications. On 28/8/2015, we agreed that there is a need for a job wide abort option, which allows the operator to re-download/re-upload a (corrected) file. 
+- [Clarification/New] While this is implicit in several of the mock-ups (Fig. 6 “re-download”, Fig. 12 “re-upload file” and Fig. 11: “Re-upload file”), this was not clearly mentioned as a functionality in the specifications. On 28/8/2015, we agreed that there is a need for a job wide abort option, which allows the operator to re-download/re-upload a (corrected) file.
+-	[Clarification/New] The general UI showing the resources should show all groups for which species/taxon data exists in the database. In order to achieve this, an “initiate script” should be run when first deploying the app, to ensure that the resources associated to these groups are created.  To detect the availability of checklist data for a group, this script could consult the field “inputfile_publishable” in fada.groups (WHERE inputfile_publishable=‘Y’).
 
 See the UI-screenshots-new folder for UI-mockups. The mock-up [./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg](./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg) shows the organisation of the two modules in tabs.
 
@@ -119,9 +120,10 @@ _The DwC-A files will be posted on a web address. From our side this may be on a
 - synchronisation of staging and production database
 
 ### 4.3 Creating resource and validating/editing metadata
-The mock-up [./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg](./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg) shows the tab for the DwC-import module. Hitting the “Add DwC-A resource should bring up a dialog to choose the concerned organism group (dropdown) and to indicate whether it concerns a new checklist (entirely new or as a (sub)group of and existing one) or an updated one. See mock-up [./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg](./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg). 
-At this stage, the operator should also be able to validate that the EML metadata contains the necessary metadata for completing details in the FADA group table (check/enter for FADA specific metadata: editor, co-editor, checklist name,…). 
-Once finished, the operator should be presented with an overview of the resource and the pending processing steps as in [./UI-screenshots-new/3FADA-import_tool-mockup-DwC-A-resource_created.jpg](./UI-screenshots-new/3FADA-import_tool-mockup-DwC-A-resource_created.jpg). In this window, we also envisage an “Edit resource metadata” option (along with “View import logs” and “Delete resource”) which allows the editor to edit the resource metadata at any stage. As discussed under 6.1, this metadata editor would be identical for the two modules.
+The mock-up [./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg](./UI-screenshots-new/1FADA-import_tool-mockup-DwC-A-resources_overview.jpg) shows the tab for the DwC-import module. Hitting the “Add DwC-A resource should bring up a dialog to choose the concerned organism group (dropdown), this will present a filtered list of the groups for which no data exists in the database yet. See mock-up [./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg](./UI-screenshots-new/2FADA-import_tool-mockup-create-DwC-A-resource.jpg). Given that the dropdown menu will present a filtered list of groups for which no data exists in the database, it will not be possible to create an already existing resource and the warning message in the lower left pane can be ignored.
+At this stage, the operator should also be able to manually enter the metadata or update the information available in the database. Potentially, this information could be harvested from the EML (“principal editor” = creator:individualName:givenName + surName; “email principal editor” = creator:address:electronicMailAddress, “co-editors” = concatenation of associatedParty:individualName:givenName + surName; and “citation” = citation), but this would mean older metadata get automatically overwritten, and as we did not foresee the functionality to compare the database content with the EML content, I believe it would be safer to do this manually.
+
+Once finished, the operator should be presented with an overview of the resource and the pending processing steps as in [./UI-screenshots-new/3FADA-import_tool-mockup-DwC-A-resource_created.jpg](./UI-screenshots-new/3FADA-import_tool-mockup-DwC-A-resource_created.jpg). In this window, we also envisage an “Edit resource metadata” option (along with “View import logs” and “Delete resource”) which allows the editor to edit the resource metadata at any stage. This could be achieved through a “edit group metadata button” as suggested by Sylvain Renaudier in his email from 11/01/2016. As discussed under 6.1, this metadata editor would be identical for the two modules.
 
 ### 4.4 Data load
 Load data in flat taxon, speciesProfile, Reference and Distribution table in staging area.
@@ -139,7 +141,7 @@ _Note: while the validation will act on different tables and fields, and might b
 
 - Check whether mandatory fields are present (see overview of DwC-field recommendations as discussed under 4.1) - if error WARNING **mandatory field(s) missing** field_name, no further processing possible
 
-Note: Originally the Excel overview was constructed more from the perspective of the data provider. During a discussion with Sylvain Renaudier on 6/8/15 we realised that it would not be usefull to generate warnings for every single missing field which is labeled as mandatory. This designation as “Mandatory” was therefore reviewed and updated in the Excel-file [./DwC-file_processing/DwC-AquaRES_field_selection-with_FADA_mapping-v1.1.xlsx](./DwC-file_processing/DwC-AquaRES_field_selection-with_FADA_mapping-v1.1.xlsx).
+Note: Originally the Excel overview was constructed more from the perspective of the data provider. During a discussion with Sylvain Renaudier on 6/8/15 we realised that it would not be useful to generate warnings for every single missing field which is labeled as mandatory. This designation as “Mandatory” was therefore reviewed and updated in the Excel-file [./DwC-file_processing/DwC-AquaRES_field_selection-with_FADA_mapping-v1.1.xlsx](./DwC-file_processing/DwC-AquaRES_field_selection-with_FADA_mapping-v1.1.xlsx).
 
 - Check whether content of fields corresponds to the expected format - if error WARNING **format error** and show line + highlight field, present dropdown menu allowing to ignore/consider empty/edit the field;
 -- namePublishedInYear should be of the format 1999a, i.e. 4 digits and optionally one latin character [a-z]. The 4 digits should be >1730 and <current year + 1. 
@@ -184,26 +186,58 @@ Note: Once the report is validated, these changes will be directly be propagated
 @Sylvain: Please let me know in case you were expecting more details “in terms of UI interaction” and “scenarios”.
 
 #### Imported data compared to data in the database tables
-Based on the groupID (entirely new group?) and (provider) taxonID/coreID > Check which data are already present in the database and compare content of fields if the provider taxonID/coreID is already present. Note that providerTaxonID is a new field that needs to be added to the database. As mentioned above this comparison is now part of a separate validation step, the “import preview”.
+Note: this section (4) is specific for the DwC-A processing, in which case we can rely on the availability of the (provider)taxonID or coreID. For Excel-dataprocessing a similar logic needs to be implemented based on the elements of the scientificName. 
 
-Records can either be;
-__NEW__: Alert the operator that this is new (unless it is an entirely new group - a group is considered new if no species data is associated to it. At the level of the import app, this would mean that there is no resource, either DwC-A or Excel import associated to it).
-__UPDATED__: Associated information added (e.g. distribution and speciesProfile data previously not available). Alert operator, default option “Apply update”, option for operator to “ignore update” .
-__POTENTIAL CONFLICT__: 
-This type of error mainly applies for any name related fields including taxonID, scientificName, genus, specificEpithet, etc. covered by the next checks.
-In case of errors, the operator should be presented with the options to ignore (keep former data), override (adopt new data) or edit and override (adopting newly entered data).
+Note: In some cases the “provider” part in “providerTaxonID” may be missing, the reason for this is that this refers to the term as used in the DwC-A-file as we receive it. To avoid confusion with the taxonID used within the FADA database, it is safer to refer to the providerTaxonID when referring to the taxonID as mentioned in the DwC-A-file.
 
-- Check whether records with the same provider taxonID (and resourceID or groupID) in the species and synonyms table have the same “scientificName, acceptedNameUsageID, parentNameUsageID, acceptedNameUsage, originalNameUsage, parentNameUsage, namePublishedIn, namePublishedInYear, kingdom, phylum, class, order, family, genus, subgenus, specificEpithet, infraspecificEpithet, taxonRank, scientificNameAuthorship”
-Note: the resourceID is linked to the import application tables and is expected to be referenced in the groups table as a foreign key. The groups table has to be updated accordingly.
-Note: The file [./database-info/Field_mapping.xlsx](./database-info/Field_mapping.xlsx) provides an overview table with the field mapping.
-- If the taxonID is new, check whether the “scientificName” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.
-- If the scientificName is not detected, check whether the combination/concatenated names of the “genus” “specificEpithet” and “infraspecificEpithet” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.
+[Rewrite attempt according to “algorithm logic”] 
+The algorithm could be organised as follows:
+1) Identify whether the imported data concerns an entirely **new group** (based on the groupID). If so, all data is new and there is no need for comparison to data in the database.
+
+2) Else, check whether the **providerTaxonID is new** or is associated with a record that has previously been imported in the database. As discussed in the [documentation on the database changes](./FADA-database-changes.md) under point 2.5, this would require a table the import schema to keep track of the provider taxonIDs from previous imports. **If new AND taxonRank is species or subspecies**: check whether any of the following subsequent checks yield a match:
+- Search “**scientificName**” in the species or synonyms table
+- Check whether the combination/concatenated names of the “genus” “specificEpithet” and “infraspecificEpithet” can be found in the species or synonyms table
 - If the taxon/scientificName is not detected using exact matching during the 2 previous steps, repeat with phonetic matching.
 
-- Check whether scientificNames with taxonRank =< family are new or are updated (for a new resource this should be the case, but during an update, the operator would be interested to know what’s new and what was already present in the database).
+If **no matches** are found, the record is considered __NEW__ and should end up in the corresponding list, which allows the operator to see what’s new.
 
-- Check whether scientificNames with taxonRank > family need to be added or are already present in the taxon table (check for conflicts) - if error WARNING **conflicting higher taxonomy**, show conflicting levels + names, provide options: ignore (keep original higher taxonomy), override (adopt new higher taxonomy) and edit and override (edit and adopt new higher taxonomy).
-Currently the higher taxonomy is copied from MySQL database tables on the [annual release of the Catalogue of Life](http://www.catalogueoflife.org/annual-checklist/2015/) DVD. A more sustainable solution for this issue, using the Catalogue of Life web services should be investigated.
+If a match is found during any of these checks, the corresponding records should be displayed among the __POTENTIAL CONFLICT__ records
+
+3) Else, if **providerTaxonID is existing AND taxonRank is species or subspecies**: Validate whether imported data compared to the data in the database’ species and synonyms table have the same “scientificName, acceptedNameUsageID, parentNameUsageID, acceptedNameUsage, originalNameUsage, parentNameUsage, namePublishedIn, namePublishedInYear, kingdom, phylum, class, order, family, genus, subgenus, specificEpithet, infraspecificEpithet, taxonRank, scientificNameAuthorship”
+
+If so, these records can be considered be __UPDATED or UNCHANGED__
+
+**Note - for discussion**: Originally I envisaged that the app would detect what has changed, so you can see/validate as an operator what has changed, but maybe this would overcomplicate things?
+
+4) Else, if **taxonRank is species or subspecies AND any of these fields has different input compared to the data in the database**, these records should be displayed among the __POTENTIAL CONFLICT__ records. The interface should allow the operator to visualise for which field there is a conflict and have the options to ignore (keep former data), override (adopt new data) or edit and override (adopting newly entered data).
+
+5) If (3) does not apply, so in the case: **providerTaxonID is existing AND taxonRank is NOT species or subspecies**: Validate whether imported data compared to the data in the database’ taxon table have the same (scientific)name. 
+
+If yes, these records can be considered be __UPDATED or UNCHANGED__ , else these records would be considered __POTENTIAL CONFLICT__ records.
+
+**Note - for discussion**: Originally I also discussed the entire higher taxon levels problematics. To be honest, I am not entirely sure how to deal with those, so the easiest solution is probably to deal with these issues ad hoc directly acting on the database.
+
+~~Based on the groupID (entirely new group?) and (provider) taxonID/coreID > Check which data are already present in the database and compare content of fields if the provider taxonID/coreID is already present. Note that providerTaxonID is a new field that needs to be added to the database. As mentioned above this comparison is now part of a separate validation step, the “import preview”.~~
+
+~~Records can either be;~~
+
+~~__NEW__: Alert the operator that this is new (unless it is an entirely new group - a group is considered new if no species data is associated to it. At the level of the import app, this would mean that there is no resource, either DwC-A or Excel import associated to it).~~
+~~__UPDATED__: Associated information added (e.g. distribution and speciesProfile data previously not available). Alert operator, default option “Apply update”, option for operator to “ignore update” .~~
+~~__POTENTIAL CONFLICT__: ~~
+~~This type of error mainly applies for any name related fields including taxonID, scientificName, genus, specificEpithet, etc. covered by the next checks.~~
+~~In case of errors, the operator should be presented with the options to ignore (keep former data), override (adopt new data) or edit and override (adopting newly entered data).~~
+
+- ~~Check whether records with the same provider taxonID (and resourceID or groupID) in the species and synonyms table have the same “scientificName, acceptedNameUsageID, parentNameUsageID, acceptedNameUsage, originalNameUsage, parentNameUsage, namePublishedIn, namePublishedInYear, kingdom, phylum, class, order, family, genus, subgenus, specificEpithet, infraspecificEpithet, taxonRank, scientificNameAuthorship”~~
+~~Note: the resourceID is linked to the import application tables and is expected to be referenced in the groups table as a foreign key. The groups table has to be updated accordingly.~~
+~~Note: The file [./database-info/Field_mapping.xlsx](./database-info/Field_mapping.xlsx) provides an overview table with the field mapping.~~
+- ~~If the taxonID is new, check whether the “scientificName” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.~~
+- ~~If the scientificName is not detected, check whether the combination/concatenated names of the “genus” “specificEpithet” and “infraspecificEpithet” can be found in the species or synonyms table and whether the status is “accepted” for names in the species found in the species table and “invalid” for names found in the synonyms table.~~
+- ~~If the taxon/scientificName is not detected using exact matching during the 2 previous steps, repeat with phonetic matching.~~
+
+- ~~Check whether scientificNames with taxonRank =< family are new or are updated (for a new resource this should be the case, but during an update, the operator would be interested to know what’s new and what was already present in the database).~~
+
+- ~~Check whether scientificNames with taxonRank > family need to be added or are already present in the taxon table (check for conflicts) - if error WARNING **conflicting higher taxonomy**, show conflicting levels + names, provide options: ignore (keep original higher taxonomy), override (adopt new higher taxonomy) and edit and override (edit and adopt new higher taxonomy).~~
+~~Currently the higher taxonomy is copied from MySQL database tables on the [annual release of the Catalogue of Life](http://www.catalogueoflife.org/annual-checklist/2015/) DVD. A more sustainable solution for this issue, using the Catalogue of Life web services should be investigated.~~ 
 
 See example mock-up [./UI-screenshots-new/5FADA-import_tool-mockup-validation_import.jpg](./UI-screenshots-new/5FADA-import_tool-mockup-validation_import.jpg).
 
