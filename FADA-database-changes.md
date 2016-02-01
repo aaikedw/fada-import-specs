@@ -143,10 +143,11 @@ The “data_downloadable” field is a new field in which we want to document wh
 The date fields
 - created
 - updated
+- published_date
 - received_date
 - validated_date
-- published_date
 are currently manually filled through the web interface. We propose to auto-populate and update the fields _created_ (date first import initiated), _updated_ (date update initiated) and _published_date_ (date import/update finalised). The latter date corresponds to the date when finalising the resource processing. Additionally, a record level timestamp will be automatically be generated at database level as described under 2.2.
+The last 2 timestamp fields (validated_date, received_date) will be ignored by the import application as they serve no purpose anymore.
 
 ### 3.5 Updates to the regions table
 The current regions table consists of the fields: _id_, _code_, _name_, _parent_id_ and _distribution_. To accommodate storing other types of area/region names, we would need a new field to store the region_type/area_prefix, which could be used to store TDWG codes as well as other codes provided through the DwC _locationID_ which has the format prefix:code (see [GBIF documentation](http://rs.gbif.org/areas/) on this topic).
