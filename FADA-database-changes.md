@@ -152,26 +152,29 @@ The last 2 timestamp fields (validated_date, received_date) will be ignored by t
 ### 3.5 Updates to the regions table
 The current regions table consists of the fields: _id_, _code_, _name_, _parent_id_ and _distribution_. To accommodate storing other types of area/region names, we would need a new field to store the region_type/area_prefix, which could be used to store TDWG codes as well as other codes provided through the DwC _locationID_ which has the format prefix:code (see [GBIF documentation](http://rs.gbif.org/areas/) on this topic).
 In addition, as the DwC-A files can both contain a _locationID_ and a _countryCode_, the latter field would need to be added to the regions table as well.
+  
+In terms of organisation of the tables, Michel proposed to rename the extended table as “regions_all” and create a view “regions” with a selection corresponding  to the current content of the fada.regions table. This view can then be called by the FADA-app to show the FADA-faunistic zone info. Similarly we could create a regions_tdwg view in case this would be needed.
 
-In terms of organisation of the tables, Michel proposed to rename the extended table as “regions_all” and create a view “regions” corresponding to the current content of this table, which would still allow the FADA-app to only call this overview which only contains the FADA-faunistic zone info. Similarly we could create a regions_tdwg table in case this would be needed.
+So we will have a table fada.regions_all with a record structure : <br/>
+ID, REGION_TYPE, CODE, NAME, PARENT_ID, DISTRIBUTION <br/>
+and a view fada.regions_all with a record structure : <br/>
+id, code, name, parent_id, distribution <br/>
+The view beign a selection of table fada.regions_all where region_type = 'FADA' <br/>
+
+Possible values for region_type will be "FADA","TDWG","ISO". The first two can be found in the Excel files. The last one in the DwcA files. The values of fada.regions_all will be prefilled. Definitley in the case of the FADA codes (NA, ANT, PAC, etc) and TDWG level 3 codes (XXX-XX format code). It will also receive as much information as possible regarding the two letter ISO codes. (Thoses codes do pose a little more of a problem)
 
 **Some examples**
 **Excel-template**: 
-If the following input is detected in the _TDWG 3rd level codes_ column: “POL-OO, PAL-IS”, the import app should compare the input with the codes in the regions table and create these new entries if missing.
-	ID region_type	 code
-	xx TDWG        POL-OO
-	xx TDWG        PAL-IS
-Next, the app should check whether the regions_species table contains an entry for the corresponding species_id and regions_id and add one if new.
+If the following input is detected in the _TDWG 3rd level codes_ (Faunistic sheet column P) : “POL-OO, PAL-IS”, the import app should look for the entities in the regions_all table or create these new entries if missing.<br/>
+	ID region_type	 code <br/>
+	xx TDWG        POL-OO <br/>
+	xx TDWG        PAL-IS <br/>
+Next, the app then creates a new relation between the species entity and the regions_all entity.
 
 **DwC-A file**: 
-If the following input is detected in the field _locationID_: “ISO:DK”, the app should look for the following entry in the regions table and create if missing.
-	ID region_type	 code
-	xx ISO         DK
-and establish a link to the corresponding region_id in the regions_species table.
-
-Similarly for _countryCode_: “DK”, the app should find the following entry in the regions table
-	ID region_type	 code
-	xx ISO         DK
+If a value “ISO:DK” is found in field _locationID_ or a value “DK” is found in field _countryCode_ the import app should look for the entities in the regions_all table using region_type "ISO" and code "DK" or create these new entries if missing.<br/>
+	ID region_type	 code<br/>
+	xx ISO         DK<br/>
 and establish a link to the corresponding region_id in the regions_species table.
 
 ### 3.6 Updates to the greferences table
