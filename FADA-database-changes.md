@@ -177,14 +177,51 @@ If a value “ISO:DK” is found in field _locationID_ or a value “DK” is fo
 	xx ISO         DK<br/>
 and establish a link to the corresponding region_id in the regions_species table.
 
+**The species regions link**
+'fada.regions_species' will be changed in two ways.
+First : In order to avoid broken links for the applications between fada.regions_species and 
+fada.regions 
+we will change the structure of the fada.regions_species link table.
+
+The change folllow the same pattern as for fada.regions.
+We create a 
+fada.regions_species_all 
+table in which we copy the contents of table fada.regions table
+fada.regions_species_all 
+has one more field named 
+region_type 
+which receives the same value as the fada.regions_all it points to.
+A view
+fada.regions_species 
+is created so that applications are not bothered by the change.
+'fada.regions_species' is a selection of fada.regions_species_all where region_type = 'FADA'
+
 ### 3.6 Updates to the greferences table
-Currently the greferences table is the one and only table containing bibliographic references in the FADA database that is used in the FADA app/website. Moreover, the links with individual taxa, species or faunistic info is not stored, although editor can potentially provide this information by using the refkey-field. This is an omission that absolutely needs to be corrected.
+Currently the greferences table is the one and only table containing bibliographic references in the FADA database that is used in the FADA app/website. Moreover, the links with individual taxa although editor can potentially provide this information by using the refkey-field. This is an omission that absolutely needs to be corrected.
 
 Adding:
 - bibliographic_citation (bibliographicCitation)
-- linking with species, taxa and faunistic info (through new species_references, taxa_references and faunistic_references tables?)
+- linking with taxa 
 
 The new “bibliographic_citation” field is meant to store the full citation for a species or taxon as provided in the Darwin Core-Archive files as parsing the field is likely to be very complex. For the current content and references coming from Excel-template data, this field would need to be constructed by concatenating author, year (to be put between parentheses), title and source.
+
+Linking with taxa.
+The bibliographic information will always be linked to a taxa through a join table.
+fada.taxon_gereferences
+-id
+-taxon_id
+-greference_id
+-document_theme
+But the nature of the link can differ.
+fada.taxon_gereferences will have a field document_theme allowing to know if the document has been associated with a taxonomic or faunistic description or both. 
+The document_theme field will have either value 'T' (Taxonomic) or 'F' (Faunistic)
+A document can be referred to by many taxons.
+A document can be referred to by one taxon in both ways at the same time.
+A document cannot be referred by one taxon twice in the same way.
+A document can be referred to by no taxon in which case it is only linked to the group, through the group_id foreign key, this is already the case.
+
+To enable the link on taxon, the species declared in the faunistic sheet must be found back in the taxon sheet.
+It is the taxon corresponding to this species (or sub-species) that will be used.
 
 #### Integration of the publications table [to be handled by RBINS team]
 The publications (and import_publications) table were added by Michel to process new bibliographic data for the Rotifera group. Ideally these info should have been stored in the greference table, but the info in the publications table is more atomised. The following fields are present in the publications table, but not in the greferences one:
@@ -196,7 +233,7 @@ The publications (and import_publications) table were added by Michel to process
 - publisherlocation
 - sereditor
 - sertitle
-The easiest solution for transferring this info to the greference table is to concatenate this info into the source field, while establishing/maintaining the link to the species through the species_references table.
+The easiest solution for transferring this info to the greference table is to concatenate this info into the source field, and link it to the group using the file name which has been stored.
 
 ### 3.7 New species_profile table
 The environment flags (2.3) will be stored in a dedicated table and are linked to the species table using the species_id.
