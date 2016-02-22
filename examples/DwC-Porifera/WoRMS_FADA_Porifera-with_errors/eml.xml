@@ -1,0 +1,382 @@
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+    xmlns:md="eml://ecoinformatics.org/methods-2.1.1"
+    xmlns:proj="eml://ecoinformatics.org/project-2.1.1"
+    xmlns:d="eml://ecoinformatics.org/dataset-2.1.1"
+    xmlns:res="eml://ecoinformatics.org/resource-2.1.1"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.0.1/eml.xsd"
+    packageId="WoRMS_export_2016-02-08" system="http://gbif.org" scope="system" xml:lang="en">
+    <dataset>
+      <title xml:lang="en">World Register of Marine Species</title>
+	  <creator>
+    	<organizationName>WoRMS Editorial Board</organizationName>
+    	<electronicMailAddress>info@marinespecies.org</electronicMailAddress>
+   	    <address>
+   	     <city></city>
+   	     <country></country>
+   	    </address>
+   	    <onlineUrl>http://www.marinespecies.org/porifera</onlineUrl>
+      </creator>
+      <metadataProvider>
+    	<individualName>
+    	 <givenName>Bart</givenName>
+    	 <surName>Vanhoorne</surName>
+    	</individualName>
+		<organizationName>WoRMS Data Management Team (DMT)</organizationName>
+    	<electronicMailAddress>info@marinespecies.org</electronicMailAddress>
+   	    <address>
+   	     <city>Ostend</city>
+   	     <postalCode>8400</postalCode>
+   	     <country>BE</country>
+   	    </address>
+   	    <onlineUrl>http://www.marinespecies.org/porifera</onlineUrl>
+      </metadataProvider>
+      <associatedParty>
+    <individualName>
+      <givenName>Belinda</givenName>
+      <surName>Alvarez</surName>
+    </individualName>
+    <organizationName>Museum and Art Galleries of the Northern Territory</organizationName>
+    <address>
+      <country>Australia</country>
+    </address>
+    <electronicMailAddress>Belinda.glasby@gmail.com; Belinda.glasby@nt.gov.au</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Nicole</givenName>
+      <surName>Boury-Esnault</surName>
+    </individualName>
+    <organizationName>WoRMS Steering Committee</organizationName>
+    <address>
+      <country></country>
+    </address>
+    <electronicMailAddress></electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Paco</givenName>
+      <surName>Cárdenas</surName>
+    </individualName>
+    <organizationName>Uppsala University; Department of Medicinal Chemistry; Division of Pharmacognosy, BioMedical Center</organizationName>
+    <address>
+      <country>Sweden</country>
+    </address>
+    <electronicMailAddress>paco.cardenas@fkog.uu.se</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Paco</givenName>
+      <surName>Cárdenas</surName>
+    </individualName>
+    <organizationName>Uppsala University; Department of Medicinal Chemistry; Division of Pharmacognosy, BioMedical Center</organizationName>
+    <address>
+      <country>Sweden</country>
+    </address>
+    <electronicMailAddress>paco.cardenas@fkog.uu.se</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Nicole</givenName>
+      <surName>de Voogd</surName>
+    </individualName>
+    <organizationName>Naturalis Biodiversity Center</organizationName>
+    <address>
+      <country>Netherlands</country>
+    </address>
+    <electronicMailAddress>nicole.devoogd@naturalis.nl</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Martin</givenName>
+      <surName>Dohrmann</surName>
+    </individualName>
+    <organizationName>Ludwig Maximilians University Munich; Faculty of Geosciences; Department of Earth and Environmental Sciences; Paleontology and Geobiology</organizationName>
+    <address>
+      <country>Germany</country>
+    </address>
+    <electronicMailAddress>m.dohrmann@lrz.uni-muenchen.de</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Eduardo</givenName>
+      <surName>Hajdu</surName>
+    </individualName>
+    <organizationName>Universidade Federal do Rio de Janeiro; Museu Nacional</organizationName>
+    <address>
+      <country>Brasil</country>
+    </address>
+    <electronicMailAddress>eduardo.hajdu@gmail.com</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>John</givenName>
+      <surName>Hooper</surName>
+    </individualName>
+    <organizationName>Queensland Museum</organizationName>
+    <address>
+      <country>Australia</country>
+    </address>
+    <electronicMailAddress>john.hooper@qm.qld.gov.au</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Dorte</givenName>
+      <surName>Janussen</surName>
+    </individualName>
+    <organizationName>Senckenberg Nature Research Society; Section Marine Invertebrates</organizationName>
+    <address>
+      <country>Germany</country>
+    </address>
+    <electronicMailAddress>dorte.janussen@senckenberg.de</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Michelle</givenName>
+      <surName>Kelly</surName>
+    </individualName>
+    <organizationName>National Institute of Water and Atmospheric Research; National Centre for Aquatic Biodiversity &amp; Biosecurity</organizationName>
+    <address>
+      <country>New Zealand</country>
+    </address>
+    <electronicMailAddress>Michelle.Kelly@niwa.co.nz</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Michelle</givenName>
+      <surName>Klautau</surName>
+    </individualName>
+    <organizationName>Universidade Federal do Rio de Janeiro</organizationName>
+    <address>
+      <country>Brasil</country>
+    </address>
+    <electronicMailAddress>mklautau@biologia.ufrj.br</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Renata</givenName>
+      <surName>Manconi</surName>
+    </individualName>
+    <organizationName>Università degli studi di SASSARI; Dipartimento di Zoologia e Genetica Evoluzionistica</organizationName>
+    <address>
+      <country>Italy</country>
+    </address>
+    <electronicMailAddress>rmanconi@uniss.it</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Bernard</givenName>
+      <surName>Picton</surName>
+    </individualName>
+    <organizationName>National Museums of Northern Ireland; Ulster Museum</organizationName>
+    <address>
+      <country>UK</country>
+    </address>
+    <electronicMailAddress>bernard.picton@nmni.com</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Andrzej</givenName>
+      <surName>Pisera</surName>
+    </individualName>
+    <organizationName>Polish Academy of Sciences; Institute of Paleobiology</organizationName>
+    <address>
+      <country>Poland</country>
+    </address>
+    <electronicMailAddress>apis@twarda.pan.pl</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Klaus</givenName>
+      <surName>Rützler</surName>
+    </individualName>
+    <organizationName>Smithsonian Institution; National Museum of Natural History; Department of Invertebrate Zoology</organizationName>
+    <address>
+      <country>USA</country>
+    </address>
+    <electronicMailAddress>RUETZLER@si.edu</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Christine</givenName>
+      <surName>Schönberg</surName>
+    </individualName>
+    <organizationName>University of Western Australia</organizationName>
+    <address>
+      <country>Australia</country>
+    </address>
+    <electronicMailAddress>christine.schonberg@uwa.edu.au</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Konstantin R.</givenName>
+      <surName>Tabachnick</surName>
+    </individualName>
+    <organizationName>Russian Academy of Sciences; P. P. Shirshov Institute of Oceanology</organizationName>
+    <address>
+      <country>Russia</country>
+    </address>
+    <electronicMailAddress></electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Jean</givenName>
+      <surName>Vacelet</surName>
+    </individualName>
+    <organizationName></organizationName>
+    <address>
+      <country></country>
+    </address>
+    <electronicMailAddress></electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Rob</givenName>
+      <surName>van Soest</surName>
+    </individualName>
+    <organizationName>Naturalis Biodiversity Center</organizationName>
+    <address>
+      <country>Netherlands</country>
+    </address>
+    <electronicMailAddress>Rob.vanSoest@naturalis.nl</electronicMailAddress>
+    <role>custodianSteward</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Rob</givenName>
+      <surName>van Soest</surName>
+    </individualName>
+    <organizationName>Naturalis Biodiversity Center</organizationName>
+    <address>
+      <country>Netherlands</country>
+    </address>
+    <electronicMailAddress>Rob.vanSoest@naturalis.nl</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Rob</givenName>
+      <surName>van Soest</surName>
+    </individualName>
+    <organizationName>Naturalis Biodiversity Center</organizationName>
+    <address>
+      <country>Netherlands</country>
+    </address>
+    <electronicMailAddress>Rob.vanSoest@naturalis.nl</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName></givenName>
+      <surName></surName>
+    </individualName>
+    <organizationName>Vlaams Instituut voor de Zee</organizationName>
+    <address>
+      <country>Belgium</country>
+    </address>
+    <electronicMailAddress>info@vliz.be</electronicMailAddress>
+    <role>programmer</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName></givenName>
+      <surName></surName>
+    </individualName>
+    <organizationName>WoRMS Steering Committee</organizationName>
+    <address>
+      <country></country>
+    </address>
+    <electronicMailAddress>info@marinespecies.org</electronicMailAddress>
+    <role>owner</role>
+      </associatedParty>
+
+	  <pubDate>
+      	2016-02-08
+      </pubDate>
+      <language>eng</language>
+      <abstract>
+        <para>With WoRMS we aim to provide the most authoritative list of names of all marine species globally, ever published.</para>
+      </abstract>
+      <keywordSet>
+	   <keyword>taxonomic</keyword>
+	   <keyword>database</keyword>
+	   <keyword>online</keyword>
+	   <keyword>marine</keyword>
+	   <keyword>species</keyword>
+	   <keywordThesaurus />
+  	  </keywordSet>
+  	  <keywordSet>
+  	   <keyword>checklist</keyword>
+  	   <keywordThesaurus>GBIF Dataset Type Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_type.xml</keywordThesaurus>
+  	  </keywordSet>
+  	  <keywordSet>
+  	   <keyword>taxonomicAuthority</keyword>
+  	   <keyword>globalSpeciesDataset</keyword>
+	   <keyword>inventoryThematic</keyword>
+  	   <keywordThesaurus>GBIF Dataset Subtype Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_subtype.xml</keywordThesaurus>
+  	  </keywordSet>
+      <intellectualRights>
+        <para>CC-by</para>
+      </intellectualRights>
+      <distribution scope="document">
+        <online>
+          <url function="information">http://www.marinespecies.org/porifera/</url>
+        </online>
+      </distribution>
+      <coverage>
+        <taxonomicCoverage>
+         <generalTaxonomicCoverage>Biota</generalTaxonomicCoverage>
+         <taxonomicClassification>
+          <taxonRankName>superdomain</taxonRankName>
+          <taxonRankValue>Biota</taxonRankValue>
+         </taxonomicClassification>
+        </taxonomicCoverage>
+		<geographicCoverage>
+          <geographicDescription>World Oceans</geographicDescription>
+          <boundingCoordinates>
+            <westBoundingCoordinate>-180</westBoundingCoordinate>
+            <eastBoundingCoordinate>180</eastBoundingCoordinate>
+            <northBoundingCoordinate>90</northBoundingCoordinate>
+            <southBoundingCoordinate>-90</southBoundingCoordinate>
+          </boundingCoordinates>
+        </geographicCoverage>
+        <temporalCoverage>
+        	<beginDate><calendarDate>1758</calendarDate></beginDate>
+        	<endDate><calendarDate>2016-02-08</calendarDate></endDate>
+        </temporalCoverage>
+      </coverage>
+      <contact>
+    	<organizationName>World Register of Marine Species (WoRMS)</organizationName>
+    	<electronicMailAddress>info@marinespecies.org</electronicMailAddress>
+      </contact>
+    </dataset>
+    <additionalMetadata>
+     <metadata>
+      <gbif>
+        <dateStamp>2016-02-08T13:05:08+01:00</dateStamp>
+        <hierarchyLevel>dataset</hierarchyLevel>
+        <citation>Van Soest, R.W.M; Boury-Esnault, N.; Hooper, J.N.A.; Rützler, K.; de Voogd, N.J.; Alvarez de Glasby, B.; Hajdu, E.; Pisera, A.B.; Manconi, R.; Schoenberg, C.; Janussen, D.; Tabachnick, K.R., Klautau, M.; Picton, B.; Kelly, M.; Vacelet, J.; Dohrmann, M.; Díaz, M.-C.; Cárdenas, P. (2016) World Porifera database. Accessed at http://www.marinespecies.org/porifera on 2016-02-08</citation>
+		<resourceLogoUrl>http://www.marinespecies.org/images/banner1.jpg</resourceLogoUrl>
+      </gbif>
+     </metadata>
+    </additionalMetadata>
+</eml:eml>
