@@ -54,7 +54,7 @@ would do it.<br/>
 This makes things somewhat easier after.<br/>
 Off course it does add a step as far as the link to references is concerned but it does help.
 
-#### Families down to SpecieGroup
+#### Families down to SpeciesGroup
 * Add/Update the taxons following a hierachical order. <br/>
 Start by adding the Families, then Subfamilies and so on until the SpeciesGroup.<br/>
 The Families are a special case because we try to link then back to higher taxonomical definitions contributed by catalog of life.
@@ -78,13 +78,13 @@ ExcelReferenceRecord instances.
 * Create the link between the fada taxon instances and the fada gereference instances using table fada.taxons_taxoreferences
 
 #### original_genus, declension_species, syn_original_genus
+* These elements are mapped to taxon instances, not species or synonyms.
 * For this part we will use ExcelTaxonomyRecords
 with a search condition.
 <pre>
 group_id=theGroup
 ( parentheses='Y' OR syn_original_genus IS NOT NULL)
 </pre>
-
 * When the original_genus is blank, use the genus value of the name as original genus.
 Look for this (name,group,rank) in the fada taxon instances. If it is not found create it without a link to the higher element but with it's group number set.
 * Original genus taxon instances are not linked to a parent taxon. Declension species taxon instances must be linked to their original genus parent.
