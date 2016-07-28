@@ -42,16 +42,8 @@
 <field index="3" term="http://rs.gbif.org/terms/1.0/isTerrestrial"/>
 <field index="4" term="http://rs.gbif.org/terms/1.0/isExtinct"/>
 
-	</extension><extension encoding="UTF-8" linesTerminatedBy="\r\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/VernacularName">
-		<files>
-			<location>vernacularname.txt</location>
-		</files>
-		<coreid index="0" /><field index="1" term="http://rs.tdwg.org/dwc/terms/vernacularName"/>
-<field index="2" term="http://purl.org/dc/terms/source"/>
-<field index="3" vocabulary="http://purl.org/dc/terms/ISO639-3" term="http://purl.org/dc/terms/language"/>
-<field index="4" term="http://rs.gbif.org/terms/1.0/isPreferredName"/>
-
-	</extension><extension encoding="UTF-8" linesTerminatedBy="\r\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/Reference">
+	</extension>
+<extension encoding="UTF-8" linesTerminatedBy="\r\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/Reference">
 		<files>
 			<location>reference.txt</location>
 		</files>
