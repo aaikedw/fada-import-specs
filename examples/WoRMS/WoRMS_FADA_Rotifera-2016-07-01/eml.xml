@@ -1,0 +1,130 @@
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+    xmlns:md="eml://ecoinformatics.org/methods-2.1.1"
+    xmlns:proj="eml://ecoinformatics.org/project-2.1.1"
+    xmlns:d="eml://ecoinformatics.org/dataset-2.1.1"
+    xmlns:res="eml://ecoinformatics.org/resource-2.1.1"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.0.1/eml.xsd"
+    packageId="WoRMS_export_2016-07-01" system="http://gbif.org" scope="system" xml:lang="en">
+    <dataset>
+      <title xml:lang="en">World Register of Marine Species</title>
+	  <creator>
+    	<organizationName>WoRMS Editorial Board</organizationName>
+    	<electronicMailAddress>info@marinespecies.org</electronicMailAddress>
+   	    <address>
+   	     <city></city>
+   	     <country></country>
+   	    </address>
+   	    <onlineUrl>http://fada.biodiversity.be</onlineUrl>
+      </creator>
+      <metadataProvider>
+    	<individualName>
+    	 <givenName>Bart</givenName>
+    	 <surName>Vanhoorne</surName>
+    	</individualName>
+		<organizationName>WoRMS Data Management Team (DMT)</organizationName>
+    	<electronicMailAddress>info@marinespecies.org</electronicMailAddress>
+   	    <address>
+   	     <city>Ostend</city>
+   	     <postalCode>8400</postalCode>
+   	     <country>BE</country>
+   	    </address>
+   	    <onlineUrl>http://fada.biodiversity.be</onlineUrl>
+      </metadataProvider>
+      <associatedParty>
+    <individualName>
+      <givenName>Hendrik</givenName>
+      <surName>Segers</surName>
+    </individualName>
+    <organizationName>Koninklijk Belgisch Instituut voor Natuurwetenschappen; Operationele Directie Natuurlijk Milieu; Afdeling Zoetwaterbiologie</organizationName>
+    <address>
+      <country>Belgium</country>
+    </address>
+    <electronicMailAddress>hendrik.segers@natuurwetenschappen.be</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+<associatedParty>
+    <individualName>
+      <givenName>Hendrik</givenName>
+      <surName>Segers</surName>
+    </individualName>
+    <organizationName>Koninklijk Belgisch Instituut voor Natuurwetenschappen; Operationele Directie Natuurlijk Milieu; Afdeling Zoetwaterbiologie</organizationName>
+    <address>
+      <country>Belgium</country>
+    </address>
+    <electronicMailAddress>hendrik.segers@natuurwetenschappen.be</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+
+	  <pubDate>
+      	2016-07-01
+      </pubDate>
+      <language>eng</language>
+      <abstract>
+        <para>With WoRMS we aim to provide the most authoritative list of names of all marine species globally, ever published</para>
+      </abstract>
+      <keywordSet>
+	   <keyword>taxonomic</keyword>
+	   <keyword>database</keyword>
+	   <keyword>online</keyword>
+	   <keyword>marine</keyword>
+	   <keyword>species</keyword>
+	   <keywordThesaurus />
+  	  </keywordSet>
+  	  <keywordSet>
+  	   <keyword>checklist</keyword>
+  	   <keywordThesaurus>GBIF Dataset Type Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_type.xml</keywordThesaurus>
+  	  </keywordSet>
+  	  <keywordSet>
+  	   <keyword>taxonomicAuthority</keyword>
+  	   <keyword>globalSpeciesDataset</keyword>
+	   <keyword>inventoryThematic</keyword>
+  	   <keywordThesaurus>GBIF Dataset Subtype Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_subtype.xml</keywordThesaurus>
+  	  </keywordSet>
+      <intellectualRights>
+        <para>CC-by</para>
+      </intellectualRights>
+      <distribution scope="document">
+        <online>
+          <url function="information"></url>
+        </online>
+      </distribution>
+      <coverage>
+        <taxonomicCoverage>
+         <generalTaxonomicCoverage>Biota</generalTaxonomicCoverage>
+         <taxonomicClassification>
+          <taxonRankName>superdomain</taxonRankName>
+          <taxonRankValue>Biota</taxonRankValue>
+         </taxonomicClassification>
+        </taxonomicCoverage>
+		<geographicCoverage>
+          <geographicDescription>World Oceans</geographicDescription>
+          <boundingCoordinates>
+            <westBoundingCoordinate>-180</westBoundingCoordinate>
+            <eastBoundingCoordinate>180</eastBoundingCoordinate>
+            <northBoundingCoordinate>90</northBoundingCoordinate>
+            <southBoundingCoordinate>-90</southBoundingCoordinate>
+          </boundingCoordinates>
+        </geographicCoverage>
+        <temporalCoverage>
+        	<beginDate><calendarDate>1758</calendarDate></beginDate>
+        	<endDate><calendarDate>2016-07-01</calendarDate></endDate>
+        </temporalCoverage>
+      </coverage>
+      <contact>
+    	<organizationName>World Register of Marine Species (WoRMS)</organizationName>
+    	<electronicMailAddress>info@marinespecies.org</electronicMailAddress>
+      </contact>
+    </dataset>
+    <additionalMetadata>
+     <metadata>
+      <gbif>
+        <dateStamp>2016-07-01T07:32:31+02:00</dateStamp>
+        <hierarchyLevel>dataset</hierarchyLevel>
+        <citation>Segers, H. (Ed.) (2016). World Rotifera database from FADA. Accessed at http://fada.biodiversity.be on 2016-07-01</citation>
+		<resourceLogoUrl>http://www.marinespecies.org/images/banner1.jpg</resourceLogoUrl>
+      </gbif>
+     </metadata>
+    </additionalMetadata>
+</eml:eml>

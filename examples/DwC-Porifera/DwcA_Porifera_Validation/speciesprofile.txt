@@ -2,9 +2,9 @@ taxonID	isMarine	isFreshwater	isTerrestrial	isExtinct
 167108	0	1	0	0
 167109	0	1	0	0
 167110	0	1	0	0
-167111	0	1	0	0
+366244	0	1	0	0
 167112	0	1	0	0
-167113	0	1	0	0
+366245	0	1	0	0
 167114	0	1	0	0
 167115	0	1	0	0
 167116	0	1	0	0
@@ -21,6 +21,7 @@ taxonID	isMarine	isFreshwater	isTerrestrial	isExtinct
 167127	0	1	0	0
 167128	0	1	0	0
 167129	0	1	0	0
-167130	0	1	0	0
+167130	0	1	K	0
 167131	0	1	0	0
+191919	0	1	0	0
 366240	0	1	0	0
