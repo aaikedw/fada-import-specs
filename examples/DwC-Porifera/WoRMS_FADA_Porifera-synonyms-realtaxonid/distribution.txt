@@ -1,0 +1,6 @@
+taxonID	locationID	locality	occurrenceStatus	establishmentMeans	startDayOfYear	endDayOfYear	source	occurrenceRemarks
+167111		United States Exclusive Economic Zone	present					
+167112	MRGID:1925	South America	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167112	MRGID:1925	South America	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+366241	MRGID:2169	Canada	present					Canada, Northern USA
+366240	MRGID:4295	Lake Michigan	present					Michigan

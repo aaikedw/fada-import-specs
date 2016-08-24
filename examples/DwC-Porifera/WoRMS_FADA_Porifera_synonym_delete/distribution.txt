@@ -1,0 +1,19 @@
+taxonID	locationID	locality	occurrenceStatus	establishmentMeans	startDayOfYear	endDayOfYear	source	occurrenceRemarks
+167112	MRGID:1925	South America	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167112	MRGID:1925	South America	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167115	MRGID:1925	South America	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167115	MRGID:1925	South America	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167116	MRGID:1925	South America	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167118	MRGID:1923	Africa	present					
+167120	MRGID:2128	India	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167123	MRGID:2125	Iraq	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167124	MRGID:18523	Congo	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167126	MRGID:1923	Africa	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	River Nile, Egypt
+167126	MRGID:3868	Egypt	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167127	MRGID:2149	Argentina	present				Bonetto, A.A.; Ezcurra De Drago, I.D. (1966). Nuevos aportes alconocimiento de las esponjas argentinas. <em>Physis.</em> 26(71): 129-140.	
+167127	MRGID:1925	South America	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167129	MRGID:26554	Zambezi	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167129	MRGID:2234	Zimbabwe	present				Hooper, J.N.A.; Van Soest, R.W.M. (Ed.) (2002). Systema Porifera: a guide to the classification of Sponges. Kluwer Academic/Plenum Publishers: New York, NY (USA). ISBN 0-306-47260-0. xix, 1-1101, 1103-1706 (2 volumes) pp.	
+167129	MRGID:1923	Africa	present					River Zambezi, Zambia
+167131	MRGID:1923	Africa	present					River Zambezi, Zambia
+366240	MRGID:4295	Lake Michigan	present					Michigan

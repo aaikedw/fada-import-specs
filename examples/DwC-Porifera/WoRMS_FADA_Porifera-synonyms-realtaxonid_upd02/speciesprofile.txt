@@ -1,0 +1,10 @@
+taxonID	isMarine	isFreshwater	isTerrestrial	isExtinct
+167108	0	1	0	0
+167109	0	1	0	0
+167110	0	1	0	0
+167111	0	1	0	0
+167112	0	1	0	0
+167113	0	1	0	0
+167201	0	1	0	0
+366241	0	1	0	0
+366240		1		0
